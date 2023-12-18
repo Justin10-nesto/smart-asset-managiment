@@ -1,0 +1,321 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+    <div class="content container-fluid">
+        <section class="content-header">
+    <div class="page-header d-print-none">
+      <div class="container-xl">
+        <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title">Project</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'DashboardPage' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Project List</li>
+                </ul>
+            </div>
+            {% if perms.TaskManagement.add_project %}
+            <div class="col-auto text-right float-right ml-auto">
+                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal" data-target="#modal-default_add"
+                    href="#edit_personal_details">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 5l0 14" />
+                        <path d="M5 12l14 0" />
+                    </svg>
+                    Create new project
+                </a>
+            </div>
+            {% endif %}
+        </div>
+      </div>
+    </div></section>
+    </div>
+    
+    <div class="modal fade" id="modal-default_add">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Project Information</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>project name</label>
+                            <input type="text" name="name" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <input type="text" name="description" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Status</label>
+                            <input type="text" name="status" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Estimated Time(in Days)</label>
+                            <input type="text" name="duration" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Country</label>
+                            <input type="text" name="country" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Region</label>
+                            <input type="text" name="region" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>District</label>
+                            <input type="text" name="district" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Ward</label>
+                            <input type="text" name="ward" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>address</label>
+                            <input type="text" name="address" class="form-control">
+                        </div>
+                        <label for="floatingSelect">Category</label>
+
+                        <select class="form-select" name="category" id="floatingSelect" aria-label="Floating label select example">
+                          {% for category in projects %}
+                            <option value="{{category.id}}">{{category.name}}</option>
+                            {% endfor %}
+                        </select>
+  
+                        <label for="floatingSelect">Site Category</label>
+
+                        <select class="form-select" name="site" id="floatingSelect" aria-label="Floating label select example">
+                          {% for site in sitesCtegories %}
+                            <option value="{{site.id}}">{{site.name}}</option>
+                            {% endfor %}
+                        </select>
+  
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Save changes">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <section class="content">
+        <div class="container-fluid">
+{% if project_info %}
+    <div class="row">
+        <div class="col-12">
+    <div class="card">
+        <div class="card-body">
+          <table id="example1" class="table table table-hover table-center mb-0">
+            <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Duration(Days)</th>
+                    <th>Status</th>
+                     <th>category</th>
+                    {% if perms.TaskManagement.change_project or perms.TaskManagement.delete_project %}
+                    <th class="text-right">Action</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for project in project_info %}
+            <tr>
+                <td>{{project.id}}</td>
+                <td><a href="{% url  'projectOverViewList' project.id %}">{{project.name}}</a></td>
+                <td>{{project.description}}</td>
+                <td>{{project.duration}}</td>
+                <td>{{project.status}}</td>
+                <td>{{project.category.name}}</td>
+                {% if perms.TaskManagement.change_project or perms.TaskManagement.delete_project %}
+                <td class="text-right">
+                    <div class="actions">
+                        {% if perms.TaskManagement.change_project %}
+                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                            data-target="#modal-default_{{project.id}}" href="#edit_personal_details">
+                            <i class="fas fa-pen"></i>Edit
+                            </a>
+                        </a>
+                        {% endif %} {% if perms.TaskManagement.delete_project %}
+                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                            data-target="#modal-default_delete{{project.id}}" href="#edit_personal_details">
+                            <i class="fas fa-trash"></i>Delete
+                        </a>
+                        {% endif %}
+                    </div>
+                </td> {% endif %}
+
+            </tr>
+        
+            <div class="modal fade" id="modal-default_delete{{project.id}}">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Delete project Information</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <h3>Are you sure you want to delete content type of
+                                <b>{{project.name}}</b>
+                            </h3>
+                            <a href="{% url 'projectDelete' project.id %}"
+                                class="btn btn-primary bg-danger-light text-right">
+                                Delete
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="modal-default_{{project.id}}">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Edit Content Type Information</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{% url 'projectEdit' project.id %}"
+                                enctype="multipart/form-data" method="POST">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label>project name</label>
+                                    <input type="text" name="name" value="{{project.name}}" class="form-control">
+                                </div>
+    
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <input type="text" name="description" value="{{project.description}}" class="form-control">
+                                </div>
+    
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <input type="text" name="status" value="{{project.status}}" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Estimated Time(in Days)</label>
+                                    <input type="text" name="duration" value="{{project.duration}}" class="form-control">
+                                </div>
+                                
+                    <div class="form-group">
+                        <label>Country</label>
+                        <input type="text" name="country" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Region</label>
+                        <input type="text" name="region" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>District</label>
+                        <input type="text" name="district" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Ward</label>
+                        <input type="text" name="ward" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>address</label>
+                        <input type="text" name="address" class="form-control">
+                    </div>
+
+                                <label for="floatingSelect">Category</label>
+    
+                                <select class="form-select" name="category" id="floatingSelect" aria-label="Floating label select example">
+                                  {% for category in projects %}
+                                    <option value="{{category.id}}">{{category.name}}</option>
+                                    {% endfor %}
+                                </select>
+                                                  <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">Close</button>
+                                    <input type="submit" class="btn btn-primary" value="Save changes">
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="modal-default_terminate_{{project.id}}">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Project Termination Form</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{% url 'projectEdit' project.id %}"
+                                enctype="multipart/form-data" method="POST">
+                                {% csrf_token %}
+                          
+                    <div class="form-group">
+                        <label for="floatingSelect">reason</label>
+                        <select class="form-select" name="reason" id="floatingSelect" aria-label="Floating label select example">
+                            {% for reson in reasons %}
+                            <option value="{{reson.id}}">{{reson.name}}</option>
+                            {% endfor %}
+                            <option value="other">other</option>
+                        </select>
+                    </div>
+                    
+                <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default"
+                    data-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-primary" value="Save changes">
+                </div>
+</form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+        <!-- /.card-body -->
+      </div>
+    </div>
+</div>
+{% endif %}
+        </div></section>
+</div>
+  
+<script>
+    $(function () {
+      $("#example1").DataTable({
+        "responsive": true, "lengthChange": false, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+      $('#example2').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+      });
+    });
+  </script>
+  
+{% include "includes/footer.html" %}

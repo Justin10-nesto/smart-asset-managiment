@@ -1,0 +1,125 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/subTask Sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+    <div class="content container-fluid">
+        <section class="content-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">{{project_info.name}}</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'subProject' project_info.id %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Project Documents</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+    <section class="content">
+        <div class="container-fluid">    
+            <div class="row">
+                {% if project_documents %}
+                <div class="table-responsive">
+                    <table id="example1" class="table table-hover table-center mb-0">
+                        <thead>
+                            <tr>
+                                <th>Phase</th>
+                                <th>Document Name</th>
+                                <th>User</th>
+                                <th>Preview</th>
+                                {% if perms.TaskManagement.change_innerprojectdeliverable or perms.TaskManagement.delete_innerprojectdeliverable %}
+                                <th class="text-right">Action</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        {% for document in project_documents %}
+                        <tr>
+                            <td>{{document.project.deliverable.phase.name}}</td>
+                            <td>{{document.project.deliverable.name}}</td>
+                            <td>{{document.user.first_name}} {{document.user.last_name}}</td>
+                            
+                            <td><a class="btn btn-primary bg-success-light mr-2" target="_blank" href="{% static document.output.url %}">
+                                <i class="fas fa-eye"></i>
+                            </a></td>
+                            {% if perms.TaskManagement.change_innerprojectdeliverable or perms.TaskManagement.delete_innerprojectdeliverable %}
+                            <td class="text-right">
+                                <div class="actions">
+                                    {% if perms.TaskManagement.delete_innerprojectdeliverable %}
+                                    <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                        data-target="#modal-default_delete{{document.id}}" href="#edit_personal_details">
+                                        <i class="fas fa-trash"></i>Delete
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td> {% endif %}
+
+                        </tr>
+                        <div class="modal fade" id="modal-default_delete{{document.id}}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Delete equipment</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h3>Are you sure you want to delete document backup of
+                                            <b>{{document.project.deliverable.name}}</b>
+                                        </h3>
+                                        <a href="{% url 'equipmentDelete' document.id %}"
+                                            class="btn btn-primary bg-danger-light text-right">
+                                            Delete
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                            <div class="modal fade" id="modal-default_allocate{{document.id}}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Resource Allocation</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{% url 'projectEquipmentAllocated' document.id %}" enctype="multipart/form-data" method="POST">
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <label for="floatingSelect">Resource Name</label>
+                                                    <input type="text" name="" value="{{document.category.name}}" readonly class="form-control">
+                                                </div>
+                                                
+                                            <div class="form-group"> 
+                                                <label>Available Quantity</label>
+                                                <input type="number" value="{{document.category.total_equipment}}" readonly class="form-control">
+                                            </div>
+                                                <div class="form-group">
+                                                    <label>Allocated Quantity</label>
+                                                    <input type="number" name="number_equipment" value="{{document.number_equipment}}" class="form-control">
+                                                </div>
+                    
+                                                            <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default"
+                                                        data-dismiss="modal">Close</button>
+                                                    <input type="submit" class="btn btn-primary" value="Save changes">
+                                                </div>
+                                            </form>
+                                        </div>
+        
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </tbody>
+
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</div>
+{% include "includes/footer.html" %}

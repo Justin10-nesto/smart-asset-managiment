@@ -1,0 +1,138 @@
+{% load static %} {% include "includes/header.html" %}
+
+{% include "SubProject/list-projectTeamContent.html" %}
+    <div class="col-auto text-right float-right ml-auto">
+      <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+        data-target="#modal-default_add_member" href="#edit_personal_details">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+          stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M12 5l0 14" />
+          <path d="M5 12l14 0" />
+        </svg>
+        Add new Teams Member
+      </a>
+    </div>
+
+    <div class="modal fade" id="modal-default_add_member">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Add project Teams Information</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="POST">
+              {% csrf_token %}
+              <div class="form-group">
+                <label>Teams</label>
+                <select class="form-select" name="user" id="floatingSelect"
+                  aria-label="Floating label select example">
+                  {% for obj in user %}
+                  <option value="{{obj.id}}">{{obj.user.first_name}} {{obj.user.last_name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Position</label>
+                <select class="form-select" name="user_position" id="floatingSelect"
+                  aria-label="Floating label select example">
+                  <option value="Leader">Leader</option>
+                  <option value="Member">Member</option>
+                </select>
+              </div>
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-primary" value="Save changes">
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table id="example1" class="table table-hover table-center mb-0">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Mobile Number</th>
+            <th>Email</th>
+            <th class="text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for st in members %}
+          <tr>
+            <td>
+              <h2 class="table-avatar">
+                <a href="student-details.html" class="avatar avatar-sm mr-2"><img
+                    class="avatar-img rounded-circle" {% if st.user.photo %}
+                    src="{% static st.user.photo.url %}">
+                  {% else %}
+                  src="{% static 'assets/img/profiles/avatar-01.jpg' %}">
+                  {% endif %}
+                  {{st.user.full_name}}
+                </a>
+              </h2>
+            </td>
+            <th>{{st.user_position}}</th>
+            <td>{{st.user.phone_number}}</td>
+            <td>{{st.user.user.email}}</td>
+            {% if perms.OverManagement.change_Objectives or perms.OverManagement.delete_Objectives %}
+            <td class="text-right">
+              <div class="actions">
+                {% if perms.OverManagement.delete_Objectives %}
+                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                  data-target="#modal-default_delete{{obj.id}}" href="#edit_personal_details">
+                  <i class="fas fa-trash"></i>Delete
+                </a>
+                {% endif %}
+              </div>
+            </td> {% endif %}
+
+            <div class="modal fade" id="modal-default_delete{{obj.id}}">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title">Delete Content Type Information</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <h3>Are you sure you want to delete remove of
+                      <b>{{st.user.full_name}}</b>
+                    </h3>
+                    <a href="{% url 'projectTeamMemberDelete' st.id %}"
+                      class="btn btn-primary bg-danger-light text-right">
+                      Delete
+                    </a>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </tr>
+          {% endfor %}
+          {% if members %}
+          <tr>
+            <td colspan="3">
+              <div class="actions">
+                <a href="{% url 'LefTeam' project_info.id teams.id %}" class="btn btn-sm btn-primary">
+                  <i class="fas fa-trash">Left the group</i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+    {% include "includes/footer.html" %}

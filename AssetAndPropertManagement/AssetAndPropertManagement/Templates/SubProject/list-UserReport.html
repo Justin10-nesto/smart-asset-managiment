@@ -1,0 +1,509 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/subTask Sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+  <div class="content container-fluid">
+    <section class="content-header">
+      <div class="row align-items-center">
+        <div class="col">
+          <h3 class="page-title">{{project_info.name}}</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'subProject' project_info.id %}">Dashboard</a></li>
+            <li class="breadcrumb-item active">User Reports</li>
+          </ul>
+        </div>
+        <div class="col-auto text-right float-right ml-auto">
+          {% if checkin %}
+          <a class="btn btn-primary bg-success-light mr-2" href="{% url 'UserCheckIn' project_info.id %}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+              stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M12 5l0 14" />
+              <path d="M5 12l14 0" />
+            </svg>
+            Check In
+          </a>
+          {% else %}
+          <a class="btn btn-primary bg-success-light mr-2" href="{% url 'UserCheckOut' project_info.id %}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+              stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M12 5l0 14" />
+              <path d="M5 12l14 0" />
+            </svg>
+            Check Out
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+  </div>
+  <section class="content">
+    <div class="container-fluid">  
+
+      <section class="section project">
+        <div class="row">
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#Overview">Task Overview</button>
+                </li>
+
+                {% for teampresent in user_data.userTeams %}
+                {% if teampresent.project_id == project_info.id %}
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab"
+                    data-bs-target="#team-{{teampresent.team.id}}">{{teampresent.team.name}}</button>
+                </li>
+                {% endif %}
+                {% endfor %}
+              </ul>
+              <div class="tab-content pt-2">
+
+                {% for teampresent in user_data.userTeams %}
+                {% if teampresent.project_id == project_info.id %}
+                <div class="tab-pane fade show active profile-overview" id="team-{{teampresent.team.id}}">
+                  <div class="row row-cards">
+                    <div class="card">
+                      <h1>{{teampresent.team.name}} Reports</h1>
+                      <div class="col-auto text-right float-right ml-auto">
+                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                          data-target="#modal-default_add_{{teampresent.team.id}}" href="#edit_personal_details">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                            stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M12 5l0 14" />
+                            <path d="M5 12l14 0" />
+                          </svg>
+                          Create new Report
+                        </a>
+                      </div>
+                      <div class="modal fade" id="modal-default_add_{{teampresent.team.id}}">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title">Add Task Report Information</h4>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form action="" method="POST">
+                                {% csrf_token %}
+
+                                <div class="form-group">
+                                  <label>team</label>
+                                  <input type="text" name="team" value="{{teampresent.team.name}}" readonly
+                                    class="form-control">
+                                </div>
+
+                                <div class="form-group">
+                                  <label>description</label>
+                                  <input type="text" name="description" value="{{report.description}}" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                  <label>challenge</label>
+                                  <input type="text" name="challenge" value="{{report.challenge}}" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                  <label>Time Spent</label>
+                                  <input type="number" name="timeSpent" value="{{report.timeSpent}}" class="form-control">
+                                </div>
+
+                                <div class="form-group">
+                                  <label>Quantity</label>
+                                  <select class="form-select" name="quantity" id="floatingSelect"
+                                    aria-label="Floating label select example">
+                                    <option value="Days">Days</option>
+                                    <option value="Weeks">Weeks</option>
+                                    <option value="Months">Months</option>
+                                    <option value="Years">Years</option>
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label>Task Status</label>
+                                  <select class="form-select" name="status" id="floatingSelect"
+                                    aria-label="Floating label select example">
+                                    <option value="Completed">Completed</option>
+                                    <option value="In Progress">Inprogress</option>
+                                    <option value="Started">Started</option>
+                                  </select>
+                                </div>
+
+                                <div class="form-group">
+                                  <label>Sub Task</label>
+                                  <select class="form-select" name="task" id="floatingSelect"
+                                    aria-label="Floating label select example">
+                                    {% for taksDone in selectedTasks %}
+                                    <option value="{{taksDone.id}}">{{taksDone.name}}</option>
+                                    {% endfor %}
+                                  </select>
+                                </div>
+
+                                <div class="modal-footer justify-content-between">
+                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                  <input type="submit" class="btn btn-primary" value="Save changes">
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                            <div class="card-body">
+                        <div class="table-responsive">
+
+                          <table id="example1" class="table table-hover table-center mb-0">
+                            <thead>
+                              <tr>
+                                <th>Task</th>
+                                <th>Task Description</th>
+                                <th>Challenge Face</th>
+                                <th>Duration</th>
+                                <th>Status</th>
+                                {% if perms.OverManagement.change_project_phase or perms.OverManagement.delete_project_phase %}
+                                <th class="text-right">Action</th>
+                                {% endif %}
+                              </tr>
+                            </thead>
+                            {% for usReport in user_data.userReport %}
+                            {% if usReport.project_id == project_info.id and usReport.team == teampresent.team %}
+                            {% for report in usReport.report %}                          
+                            <tr>
+                              <td>{{report.task.name}}</td>
+                              <td>{{report.description}}</td>
+                              <td>{{report.challenge}}</td>
+                              <td>{{report.timeSpent}} {{report.quantity}}</td>
+
+                              {% if report.status == 'Completed' %}
+                              <td><span class=" badge bg-green">{{report.status}}</span></td>
+                              {% elif report.status == 'In Progress' %}
+                              <td><span class=" badge bg-red-light">{{report.status}}</span></td>
+                              {% else %}
+                              <td><span class=" badge bg-danger">{{report.status}}</span></td>
+                              {% endif %}
+                              {% if perms.OverManagement.change_project_phase or perms.OverManagement.delete_project_phase %}
+                              <td class="text-right">
+                                <div class="actions">
+                                  {% if perms.OverManagement.change_project_phase %}
+                                  <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                    data-target="#modal-default_{{report.id}}" href="#edit_personal_details">
+                                    <i class="fas fa-pen"></i>Edit
+                                  </a>
+                                  {% endif %} {% if perms.OverManagement.delete_project_phase %}
+                                  <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                    data-target="#modal-default_delete{{report.id}}" href="#edit_personal_details">
+                                    <i class="fas fa-trash"></i>Delete
+                                  </a>
+                                  {% endif %}
+                                </div>
+                              </td> {% endif %}
+
+                            </tr>
+                            <div class="modal fade" id="modal-default_delete{{report.id}}">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h4 class="modal-title">Delete Project Phases Information</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <h3>Are you sure you want to delete Project Phases of
+                                      <b>{{report.name}}</b>
+                                    </h3>
+                                    <a href="{% url 'projectPhaseDelete' report.id %}"
+                                      class="btn btn-primary bg-danger-light text-right">
+                                      Delete
+                                    </a>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                            <div class="modal fade" id="modal-default_{{report.id}}">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h4 class="modal-title">Edit Project Phases Information</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <form action="{% url 'userReportEdit' report.id %}"
+                                      enctype="multipart/form-data" method="POST">
+                                      {% csrf_token %}
+                                          <div class="form-group">
+                                            <label>team</label>
+                                            <input type="text" name="team" value="{{teampresent.team.name}}" readonly
+                                              class="form-control">
+                                          </div>
+            
+                                          <div class="form-group">
+                                            <label>description</label>
+                                            <input type="text" name="description" value="{{report.description}}" class="form-control">
+                                          </div>
+                                          <div class="form-group">
+                                            <label>challenge</label>
+                                            <input type="text" name="challenge" value="{{report.challenge}}" class="form-control">
+                                          </div>
+                                          <div class="form-group">
+                                            <label>Time Spent</label>
+                                            <input type="number" name="timeSpent" value="{{report.timeSpent}}" class="form-control">
+                                          </div>
+            
+                                          <div class="form-group">
+                                            <label>Quantity</label>
+                                            <select class="form-select" name="quantity" id="floatingSelect"
+                                              aria-label="Floating label select example">
+                                              <option value="Hours">Hours</option>
+                                              <option value="Days">Days</option>
+                                              <option value="Weeks">Weeks</option>
+                                              <option value="Months">Months</option>
+                                              <option value="Years">Years</option>
+                                            </select>
+                                          </div>
+                                          <div class="form-group">
+                                            <label>Task Status</label>
+                                            <select class="form-select" name="status" id="floatingSelect"
+                                              aria-label="Floating label select example">
+                                              <option value="{{report.status}}">{{report.status}}</option>
+                                              <option value="Completed">Completed</option>
+                                              <option value="In Progress">Inprogress</option>
+                                              <option value="Started">Started</option>
+                                            </select>
+                                          </div>
+            
+                                          <div class="form-group">
+                                            <label>Tasks</label>
+                                            <select class="form-select" name="task" id="floatingSelect"
+                                              aria-label="Floating label select example">
+                                              {% for taksDone in selectedTasks %}
+                                              <option value="{{taksDone.id}}">{{taksDone.name}}</option>
+                                              {% endfor %}
+                                            </select>
+                                          </div>
+            
+                                                <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <input type="submit" class="btn btn-primary" value="Save changes">
+                                      </div>
+                                    </form>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                            </div>
+                            
+                            {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+                          </tbody>
+
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {% endif %}
+                {% endfor %}
+                <div class="tab-pane fade Overview pt-3" id="Overview">
+
+                  <!-- Profile Edit Form -->
+                  <div class="row">
+                    <h6 class="card-subtitle mb-2 mt-3">Overview</h6>
+                    <ul class="list-group">
+
+                      <div class="row">
+
+                        <h6 class=" card-subtitle mb-2 mt-3">
+                          <div class="col-auto text-right ml-auto">
+                            <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                              data-target="#modal-default_add_{{teampresent.team.id}}" href="#edit_personal_details">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M12 5l0 14" />
+                                <path d="M5 12l14 0" />
+                              </svg>
+                              Create new task
+                            </a>
+                          </div>
+                        </h6>
+
+                        <div class="row">
+                          <div class="table-responsive">
+                            <table id="example1" class="table table-hover table-center mb-0">
+                              <thead>
+                                <tr>
+                                  <th>Name</th>
+                                  <th>Price</th>
+                                  <th>Status</th>
+                                  <th class="text-right">Action</th>
+                                </tr>
+                              </thead>
+                              {% for tsk in task_info %}
+                              <tr>
+                                <td>{{report.name}}</td>
+                                <td>{{report.price}}/=</td>
+
+                                {% if report.status == 'Completed' %}
+                                <td><span class=" badge bg-green">{{report.status}}</span></td>
+                                {% elif report.status == 'In Progress' %}
+                                <td><span class=" badge bg-red-light">{{report.status}}</span></td>
+                                {% else %}
+                                <td><span class=" badge bg-danger">{{report.status}}</span></td>
+                                {% endif %}
+                                {% if perms.OverManagement.change_Objectives or perms.OverManagement.delete_Objectives %}
+                                <td class="text-right">
+                                  <div class="actions">
+                                    {% if perms.OverManagement.change_Objectives %}
+                                    <a class="btn btn-primary bg-success-light mr-2"
+                                      href="{% url 'taskCompletedVerified' report.id %}">
+                                      <i class="fas fa-pen"></i>Completed
+                                    </a>
+                                    </a>
+                                    {% endif %}
+                                    {% if perms.OverManagement.change_Objectives %}
+                                    <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                      data-target="#modal-default_{{report.id}}" href="#edit_personal_details">
+                                      <i class="fas fa-pen"></i>Edit
+                                    </a>
+                                    </a>
+                                    {% endif %} {% if perms.OverManagement.delete_Objectives %}
+                                    <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                      data-target="#modal-default_delete{{report.id}}" href="#edit_personal_details">
+                                      <i class="fas fa-trash"></i>Delete
+                                    </a>
+                                    {% endif %}
+                                  </div>
+                                </td> {% endif %}
+
+                              </tr>
+                              <div class="modal fade" id="modal-default_delete{{report.id}}">
+                                <div class="modal-dialog">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h4 class="modal-title">Delete Content Type Information</h4>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                    </div>
+                                    <div class="modal-body">
+                                      <h3>Are you sure you want to delete content type of
+                                        <b>{{report.name}}</b>
+                                      </h3>
+                                      <a href="{% url 'projectObjectiveDelete' report.id %}"
+                                        class="btn btn-primary bg-danger-light text-right">
+                                        Delete
+                                      </a>
+                                    </div>
+
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="modal fade" id="modal-default_{{report.id}}">
+                                <div class="modal-dialog">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h4 class="modal-title">Edit Content Type Information</h4>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                    </div>
+                                    <div class="modal-body">
+                                      <form action="{% url 'userReportEdit' report.id %}" enctype="multipart/form-data"
+                                        method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                          <label>Name</label>
+                                          <input type="text" name="name" value="{{report.name}}" class="form-control">
+                                        </div>
+
+                                        <div class="form-group">
+                                          <label>Task Number</label>
+                                          <input type="text" name="task_number" value="{{report.task_number}}"
+                                            class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                          <label>Priority(0-10)</label>
+                                          <input type="number" name="priority" value="{{report.priority}}"
+                                            class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                          <label>Duration</label>
+                                          <input type="number" name="duration" class="form-control">
+                                        </div>
+
+                                        <div class="form-group">
+                                          <label>Quantity</label>
+                                          <select class="form-select" name="quantity" id="floatingSelect"
+                                            aria-label="Floating label select example">
+                                            <option value="Days">Days</option>
+                                            <option value="Weeks">Weeks</option>
+                                            <option value="Months">Months</option>
+                                            <option value="Years">Years</option>
+                                          </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                          <label>Start Date</label>
+                                          <input type="date" name="start_date" class="form-control">
+                                        </div>
+
+                                        <div class="form-group">
+                                          <label>Price</label>
+                                          <input type="number" name="price" value="{{report.price}}" class="form-control">
+                                        </div>
+
+                                        <div class="modal-footer justify-content-between">
+                                          <button type="button" class="btn btn-default"
+                                            data-dismiss="modal">Close</button>
+                                          <input type="submit" class="btn btn-primary" value="Save changes">
+                                        </div>
+                                      </form>
+                                    </div>
+
+                                  </div>
+                                </div>
+                              </div>
+
+                              {% endfor %}
+
+                              </tbody>
+
+                            </table>
+                          </div>
+                        </div>
+
+                      </div>
+                    </ul>
+                  </div>
+
+                  <!-- End Profile Edit Form -->
+
+                </div>
+
+              </div><!-- End Bordered Tabs -->
+
+            </div>
+          </div>
+      </section>
+    </div>
+  </section>
+
+
+    <div class="modal fade" id="modal-default_add_phase">
+      <!-- Content for modal-default_add_phase goes here -->
+    </div>
+  </div>
+
+</div>
+{% include "includes/footer.html" %}

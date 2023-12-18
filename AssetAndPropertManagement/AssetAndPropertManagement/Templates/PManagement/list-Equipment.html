@@ -1,0 +1,266 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+    <div class="content container-fluid">
+        <section class="content-header">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Project</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'DashboardPage' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Project equipments</li>
+                    </ul>
+                </div>
+                {% if perms.TaskManagement.add_equipment %}
+                <div class="col-auto text-right float-right ml-auto">
+                    <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                        data-target="#modal-default_add" href="#edit_personal_details">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                            stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M12 5l0 14" />
+                            <path d="M5 12l14 0" />
+                        </svg>
+                        Create new Equipment
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        </section>
+
+        <div class="modal fade" id="modal-default_add">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Equipment Information</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Equipment name</label>
+                                <input type="text" name="name" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <label>description</label>
+                                <input type="text" name="description" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Total Amount</label>
+                                <input type="number" name="total_amount" class="form-control">
+                            </div>
+
+                            <label for="floatingSelect">Status</label>
+
+                            <select class="form-select" name="status" id="floatingSelect"
+                                aria-label="Floating label select example">
+                                <option value="Active">Active</option>
+                                <option value="Fault">Fault</option>
+                                <option value="Total Failed">Total Failed</option>
+                            </select>
+
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-primary" value="Save changes">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <section class="content">
+            <div class="container-fluid">
+        {% if equipment_info %}
+        <div class="row">
+            <div class="table-responsive">
+                <table id="example1" class="table table-hover table-center mb-0">
+                    <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Tools Available</th>
+                            <th>Status</th>
+                            {% if perms.TaskManagement.change_equipment or perms.TaskManagement.delete_equipment %}
+                            <th class="text-right">Action</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    {% for equipment in equipment_info %}
+                    <tr>
+                        <td>{{equipment.id}}</td>
+                        <td>{{equipment.name}}</td>
+                        <td>{{equipment.description}}</td>
+                        <td>{{equipment.total_equipment}}</td>
+                        {% if equipment.status == 'Active' %}
+                        <td><span class=" badge bg-green">{{equipment.status}}</span></td>
+                        {% elif equipment.status == 'Fault' %}
+                        <td><span class=" badge bg-red-light">{{equipment.status}}</span></td>
+                        {% else %}
+                        <td><span class=" badge bg-danger">{{equipment.status}}</span></td>
+                        {% endif %}
+                        {% if perms.TaskManagement.change_equipment or perms.TaskManagement.delete_equipment %}
+                        <td class="text-right">
+                            <div class="actions">
+                                {% if perms.TaskManagement.change_equipment %}
+                                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                    data-target="#modal-default_add_more_{{equipment.id}}" href="#edit_personal_details">
+                                    <i class="fas fa-pen"></i>Add
+                                </a>
+                                {% endif %}
+                                {% if perms.TaskManagement.change_equipment %}
+                                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                    data-target="#modal-default_{{equipment.id}}" href="#edit_personal_details">
+                                    <i class="fas fa-pen"></i>Edit
+                                </a>
+                                {% endif %} {% if perms.TaskManagement.delete_equipment %}
+                                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                    data-target="#modal-default_delete{{equipment.id}}" href="#edit_personal_details">
+                                    <i class="fas fa-trash"></i>Delete
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td> {% endif %}
+
+                    </tr>
+                    <div class="modal fade" id="modal-default_delete{{equipment.id}}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Delete equipment Information</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <h3>Are you sure you want to delete equipment of
+                                        <b>{{equipment.name}}</b>
+                                    </h3>
+                                    <a href="{% url 'equipmentDelete' equipment.id %}"
+                                        class="btn btn-primary bg-danger-light text-right">
+                                        Delete
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="modal-default_{{equipment.id}}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Edit equipment Information</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{% url 'equipmentEdit' equipment.id %}"
+                                        enctype="multipart/form-data" method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label>project name</label>
+                                            <input type="text" name="name" value="{{equipment.name}}"
+                                                class="form-control">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <input type="text" name="description" value="{{equipment.description}}"
+                                                class="form-control">
+                                        </div>
+            
+                                        <div class="form-group">
+                                            <label>Total Amount</label>
+                                            <input type="number" name="total_amount"  value="{{equipment.total_equipment}}" class="form-control">
+                                        </div>
+            
+                                        <label for="floatingSelect">Status</label>
+            
+                                        <select class="form-select" name="status" id="floatingSelect"
+                                            aria-label="Floating label select example">
+                                            <option value="{{equipment.status}}">{{equipment.status}}</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Fault">Fault</option>
+                                            <option value="Total Failed">Total Failed</option>
+                                        </select>
+                                                    <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default"
+                                                data-dismiss="modal">Close</button>
+                                            <input type="submit" class="btn btn-primary" value="Save changes">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="modal-default_add_more_{{equipment.id}}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Add more equipment</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{% url 'equipmentAddMore' equipment.id %}"
+                                        enctype="multipart/form-data" method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label>project name</label>
+                                            <input type="text" name="name" readonly value="{{equipment.name}}"
+                                                class="form-control">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <input type="text" name="description" readonly value="{{equipment.description}}"
+                                                class="form-control">
+                                        </div>
+            
+                                        <div class="form-group">
+                                            <label>Total Amount</label>
+                                            <input type="number" name="total_amount"  value="{{equipment.total_equipment}}" class="form-control">
+                                        </div>
+            
+                                        <label for="floatingSelect">Status</label>
+            
+                                        <select class="form-select" name="status" id="floatingSelect"
+                                            aria-label="Floating label select example">
+                                            <option value="{{equipment.status}}">{{equipment.status}}</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Fault">Fault</option>
+                                            <option value="Total Failed">Total Failed</option>
+                                        </select>
+                                                    <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default"
+                                                data-dismiss="modal">Close</button>
+                                            <input type="submit" class="btn btn-primary" value="Save changes">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    </section>
+</div>
+{% include "includes/footer.html" %}

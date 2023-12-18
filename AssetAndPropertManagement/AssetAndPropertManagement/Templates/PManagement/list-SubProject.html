@@ -1,0 +1,180 @@
+{% load static %}
+{% include "includes/header.html" %}
+{% include "PManagement/project.html" %}
+
+        <div class="row">
+          {% if perms.TaskManagement.add_subproject %}
+          <h6 class=" card-subtitle mb-2 mt-3">
+            <div class="col-auto text-right ml-auto">
+              <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                data-target="#modal-default_add_SubProject" href="#edit_personal_details">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M12 5l0 14" />
+                  <path d="M5 12l14 0" />
+                </svg>
+                Create new sub-subProject
+              </a>
+            </div>
+          </h6>
+          {% endif %}
+
+          <div class="modal fade" id="modal-default_add_SubProject">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Add sub Project Information</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                      <label for="edit_name">subProject name</label>
+                      <input type="text" id="edit_name" name="name" value="{{ subpro.name }}"
+                        class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="edit_description">Description</label>
+                      <input type="text" id="edit_description" name="description"
+                        value="{{ subpro.description }}" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="edit_status">Status</label>
+                      <input type="text" id="edit_status" name="status" value="{{ subpro.status }}"
+                        class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label for="edit_duration">Estimated Time (in Days)</label>
+                      <input type="text" id="edit_duration" name="duration" value="{{ subpro.duration }}"
+                        class="form-control">
+                    </div>
+                    <label for="edit_category">Category</label>
+
+                    <select class="form-select" name="category" id="edit_category"
+                      aria-label="Floating label select example">
+                      {% for category in categories %}
+                      <option value="{{ category.id }}">{{ category.name }}</option>
+                      {% endfor %}
+                    </select>
+                    <div class="modal-footer justify-content-between">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <input type="submit" class="btn btn-primary" value="Save changes">
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% for subpro in subProject_info %}
+
+          <div class="col-xxl-4 col-md-6">
+            <div class="card">
+              <div class="card-header">
+                {{ subpro.name }}
+                <span class="card-subtitle m-2"><b>{{ subpro.category.name }}</b></span>
+              </div>
+              <div class="ribbon bg-green">{{ subpro.status }}</div>
+              <div class="card-body">
+                <div class="card-title">{{ subpro.description }}</div>
+                <a class="btn btn-primary bg-success-light mr-2"
+                  href="{% url 'subProject' subpro.id %}">View
+                  More</a>
+                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                  data-target="#modal-default_{{ subpro.id }}" href="#edit_personal_details">Edit</a>
+                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                  data-target="#modal-default_delete{{ subpro.id }}"
+                  href="#edit_personal_details">Delete</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal fade" id="modal-default_delete{{ subpro.id }}">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Delete subProject Information</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <h3>Are you sure you want to delete content type of <b>{{ subpro.name }}</b>
+                  </h3>
+                  <a href="{% url 'subProjectDelete' subpro.id %}"
+                    class="btn btn-primary bg-danger-light text-right">
+                    Delete
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal fade" id="modal-default_{{ subpro.id }}">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Edit Content Type Information</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="{% url 'subProjectEdit' subpro.id %}" enctype="multipart/form-data"
+                    method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <label for="edit_name">subProject name</label>
+                      <input type="text" id="edit_name" name="name" value="{{ subpro.name }}"
+                        class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="edit_description">Description</label>
+                      <input type="text" id="edit_description" name="description"
+                        value="{{ subpro.description }}" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="edit_status">Status</label>
+                      <input type="text" id="edit_status" name="status" value="{{ subpro.status }}"
+                        class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label for="edit_duration">Estimated Time (in Days)</label>
+                      <input type="text" id="edit_duration" name="duration" value="{{ subpro.duration }}"
+                        class="form-control">
+                    </div>
+                    <label for="edit_category">Category</label>
+
+                    <select class="form-select" name="category" id="edit_category"
+                      aria-label="Floating label select example">
+                      {% for category in categories %}
+                      <option value="{{ category.id }}">{{ category.name }}</option>
+                      {% endfor %}
+                    </select>
+                    <div class="modal-footer justify-content-between">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <input type="submit" class="btn btn-primary" value="Save changes">
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+
+        </div>
+      </ul>
+    </div>
+</div>
+</div>
+
+{% include "includes/footer.html" %}

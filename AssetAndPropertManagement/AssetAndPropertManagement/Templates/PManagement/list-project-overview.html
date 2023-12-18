@@ -1,0 +1,127 @@
+{% load static %}
+{% include "includes/header.html" %}
+{% include "PManagement/project.html" %}
+
+<div class="tab-content pt-2">
+  {% if perms.TaskManagement.view_subproject %}
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <h6 class="card-subtitle mb-2">Project Name</h6>
+          <p class="card-text">{{ project_detail.project.name }}</p>
+
+          <h6 class="card-subtitle mb-2">Status</h6>
+          <span class="badge bg-{{ project_detail.project.status|lower }} text-white">
+            {{ project_detail.project.status }}
+          </span>
+          <img src="{% static project_info.qrcode %}" alt="{{project_info.qrcode}}">
+          <P>{{project_info.name}}</P>
+        </div>
+        <div class="col-md-6">
+          <h6 class="card-subtitle mb-2">Duration</h6>
+          <p class="card-text">{{ project_detail.project.duration }} Days</p>
+
+          <h6 class="card-subtitle mb-2">Time Left to Accomplish</h6>
+          <p class="card-text">{{ project_detail.project.time_left }} Days</p>
+
+          <h6 class="card-subtitle mb-2">production Budget</h6>
+          <p class="card-text">${{ project_detail.Production_cost }}</p>
+          <h6 class="card-subtitle mb-2">other cost</h6>
+          <p class="card-text">${{ project_detail.other }}</p>
+          <h6 class="card-subtitle mb-2">Total Project Budget</h6>
+          <p class="card-text">${{ project_detail.total_cost }}</p>
+        </div>
+      </div>
+      <h6 class="card-subtitle mb-2 mt-3">Project Description</h6>
+
+      {% if perms.TaskManagement.view_subproject %}
+      <p class="card-text">{{ subProject_info_main.description }}</p>
+      <a class="btn btn-primary bg-success-light mr-2"
+        href="{% url 'subProject' subProject_info_main.id %}">View
+        More</a>
+      {% endif %}
+
+    </div>
+
+  
+
+  {% endif %}
+
+
+</div><!-- End Bordered Tabs -->
+
+</div>
+</div>
+
+</div>
+</section>
+
+<div class="modal fade" id="modal-default_add">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title">Add Project Budget Information</h4>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+</button>
+</div>
+<div class="modal-body">
+<form action="{% url 'subprojectBudgetList' project_detail.project.id %}" method="POST">
+  {% csrf_token %}
+  {% for item in items %}
+  <div class=" row mb-3">
+    <label for="{{item.name}}" class=" col-sm-3 col-form-label">{{item.name}}</label>
+    <div class=" col-sm-8">
+      <input type="number" id="{{item.name}}" value="0" name="item_{{item.id}}" class="form-control">
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="modal-footer justify-content-between">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <input type="submit" class="btn btn-primary" value="Save changes">
+  </div>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+<script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+<script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/vendor/chart.js/chart.umd.js' %}"></script>
+<script src="{% static 'assets/vendor/echarts/echarts.min.js' %}"></script>
+<script src="{% static 'assets/vendor/quill/quill.min.js' %}"></script>
+<script src="{% static 'assets/vendor/simple-datatables/simple-datatables.js' %}"></script>
+<script src="{% static 'assets/vendor/tinymce/tinymce.min.js' %}"></script>
+<script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+
+<!-- Template Main JS File -->
+<script src="{% static 'assets/js/main.js' %}"></script>
+
+<script>
+let submitButton = document.getElementById('saving')
+let inputMessage = document.querySelector('.quill-editor-full')
+submitButton.addEventListener('click', function (event) {
+event.preventDefault();
+let contentReturned = inputMessage.querySelector('.ql-editor').children;
+const domain = document.URL.split(':');
+let lastWord = domain[2].split('/');
+const contenturl = domain[0] + ':' + domain[1] + ':' + lastWord[0] + '/comunicationList/' + lastWord[lastWord.length - 1]
+let context = { message: JSON.stringify(contentReturned) };
+
+fetch(contenturl, {
+'method': 'POST',
+'body': JSON.stringify(context),
+'headers': {
+'Content-Type': 'application/json'
+}
+});
+});
+</script>
+</body>
+
+</html>

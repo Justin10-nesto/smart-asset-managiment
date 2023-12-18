@@ -1,0 +1,173 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/subTask Sidebar.html" %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Project Report</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">Project Report</li>
+          </ol>
+        </div>
+      </div>
+      <h6 class=" card-subtitle mb-2 mt-3">
+        <div class="col-auto text-right ml-auto">
+          <a class="btn btn-primary bg-success-light mr-2" href="{% url 'reportPdf' project_info.id %}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+              viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M12 5l0 14" />
+              <path d="M5 12l14 0" />
+            </svg>
+            Generate Report
+          </a>
+        </div>
+      </h6>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+      <div class="card-body">
+        
+        <div class="row">
+          <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
+            <div class="row">
+              <H1 class=" align-center text-center">{{project_info.name | upper}} Report</H1>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Project Status  </span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.GeneralStatus}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">start Date  </span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.start_endDate.start}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Estimated End Date  </span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.start_endDate.end}} </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Estimated project duration</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.start_endDate.duration}} Days</span>
+                  </div>
+                </div>
+              </div><div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Estimated budget</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.production_cost}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <h4>Team members</h4>
+                <div class="table-responsive">
+                  <table class="table table-hover table-center mb-0">
+                      <thead>
+                          <tr>
+                              <th>Role</th>
+                              <th>Number of users</th>
+                              <th>User</th>
+                          </tr>
+                      </thead>
+                      {% for team in project_info.team_members %}
+                      <tr>
+                        <td>{{team.position}}</td>
+                        <td>{{team.number}}</td>
+                        <td>
+                          {% for user in team.user %}
+                          <div class="user-panel mt-2 pb-2 mb-2 d-flex">
+                            <div class="image">
+                              {% if user.photo %}
+                              <img src="{% static user.photo.url %}" class="img-circle elevation-2" alt="User Image">
+                              {% else %}
+                              <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">
+                              {% endif %}
+                            </div>
+                          </div>
+                          {% endfor %}                  
+                        </td>
+
+                      </tr>
+                      {% endfor %}
+                      </tbody>
+
+                  </table>
+              </div>
+            
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+            <h3 class="text-primary">{{project_info.project.name | upper}}</h3>
+            <h3 class="text-primary"> - {{project_info.name}}</h3>
+            <p class="text-muted">{{project_info.description}}</p>
+            <br>
+            <div class="text-muted">
+              <p class="text-sm">Client Company
+                <b class="d-block">NHC</b>
+              </p>
+              <p class="text-sm">Project Leader
+                <b class="d-block">Tony Chicken</b>
+              </p>
+            </div>
+
+            <h5 class="mt-5 text-muted">Project Deliverables</h5>
+            <ul class="list-unstyled">
+              {% if project_info.number_delivarables %}  
+              {% for delivarable in project_info.number_delivarables %}   
+              <li>
+                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-pdf"></i> {{delivarable.delivarable.name}}
+                  {% if delivarable.status.COMPLETED == 1 %}
+                  <span class=" badge bg-green">COMPLETED</span>
+                  {% elif delivarable.status.GOINING == 1 %}
+                  <span class=" badge bg-red-light">ON GOINING</span>
+                  {% elif delivarable.status.Verified == 1 %}
+                  <span class=" badge bg-red-light">VERIFIED</span>
+                  {% elif delivarable.status.Initial == 1 %}
+                  <span class=" badge bg-red-light">ON Initial Process</span>
+                  {% else %}
+                  <span class=" badge bg-danger">Not Yet</span>
+                  {% endif %}
+            
+                </a>
+              </li>
+              {% endfor %}
+              {% endif %}
+              </ul>
+          </div>
+        </div>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+
+  </section>
+  <!-- /.content -->
+</div>
+{% include "includes/footer.html" %}

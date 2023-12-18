@@ -1,0 +1,213 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+    <div class="content container-fluid">
+        <section class="content-header">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Users</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Users</li>
+                    </ul>
+                </div>
+                {% if perms.auth.add_user %}
+                <div class="col-auto text-right float-right ml-auto">
+                    <a href="" class="btn btn-primary"
+                    data-toggle="modal" data-target="#modal-default_add_{{user.user.id}}" href="#edit_personal_details"><i class="fas fa-plus"></i> Create New User</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="modal fade" id="modal-default_add_{{user.user.id}}">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">User Information</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                            <form method="POST" action="{% url 'createUser' %}" class="row g-3 needs-validation">
+                                {% csrf_token %}
+                                 <div class="col-12">
+                                   <label for="yourName" class="form-label">First Name</label>
+                                   <input type="text" name="first_name" class="form-control"  required>
+                                   <div class="invalid-feedback">Please, enter your First name!</div>
+                                 </div>
+                                 <div class="col-12">
+                                   <label for="yourName" class="form-label">middle Name</label>
+                                   <input type="text" name="middle_name" class="form-control"  required>
+                                 </div>
+                                 <div class="col-12">
+                                   <label for="yourName" class="form-label">Last Name</label>
+                                   <input type="text" name="last_name" class="form-control"  required>
+                                   <div class="invalid-feedback">Please, enter your Last name!</div>
+                                 </div>
+             
+                                 <div class="col-12">
+                                   <label for="yourEmail" class="form-label">Your Email</label>
+                                   <input type="email" name="email" class="form-control" id="yourEmail" required>
+                                   <div class="invalid-feedback">Please enter a valid Email adddress!</div>
+                                 </div>
+                                 <div class="col-12">
+                                   <label for="yourphone number" class="form-label">Your phone number</label>
+                                   <input type="tel" name="phone_number" class="form-control" id="yourphonenumber" required>
+                                   <div class="invalid-feedback">Please enter a valid phone number adddress!</div>
+                                 </div>
+                                 <div class="col-12">
+                                   <label for="yourphone number" class="form-label">Country</label>
+                                   <input type="tel" name="country" class="form-control" id="Country" required>
+                                   <div class="invalid-feedback">Please selext your Country</div>
+                                 </div>
+                                 <div class="col-12">
+                                   <label class="form-label">Date of Birth</label>
+                                   <input type="date" name="bod" class="form-control" id="DateofBirth" required>
+                                   <div class="invalid-feedback">Please selext your date of Birth</div>
+                                 </div>
+             
+                                 <div class="col-12">
+                                   <label for="yourUsername" class="form-label">Username</label>
+                                   <div class="input-group has-validation">
+                                     <span class="input-group-text" id="inputGroupPrepend">@</span>
+                                     <input type="text" name="username" class="form-control" id="yourUsername" required>
+                                     <div class="invalid-feedback">Please choose a username.</div>
+                                   </div>
+                                 </div>
+                                 <div class="col-12">
+                                 <label for="floatingSelect">Gender</label>
+             
+                                   <select class="form-select" name="gender" id="floatingSelect" aria-label="Floating label select example">
+                                     <option value="Male" selected>Male</option>
+                                     <option value="Female">Female</option>
+                                   </select>
+                                   </div>
+                                   <div class="col-12">
+                                   <label for="floatingSelect">Role</label>
+               
+                                     <select class="form-select" name="role" id="floatingSelect" aria-label="Floating label select example">
+                                        {% for role in groups_list %}
+                                       <option value="{{role.id}}">{{role.name}}</option>
+                                        {% endfor %}
+                                     </select>
+                                     </div>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-primary" value="Save changes">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </section>
+        <section class="content">
+            <div class="container-fluid">
+    
+        {% if users_groups %}
+        <div class="row">
+            <div class="table-responsive">
+                <table id="example1" class="table table-hover table-center mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Roles</th>
+                            <th>is_staff</th>
+                            <th>is_active</th>
+                            {% if perms.auth.change_user or perms.auth.delete_user %}
+                            <th class="text-right">Action</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users_groups %}
+                        <tr>
+                            <td>{{user.user.id}}</td>
+
+                            <th>{{user.user.first_name}}</th>
+                            <td>{{user.user.email}}</td>
+                            <td>
+
+                                {% for group in user.groups %} {{group.name}} {% endfor %}
+                            </td>
+                            <td>{{user.user.is_staff}}</td>
+                            <td>{{user.user.is_active}}</td>
+                            {% if perms.auth.change_user or perms.auth.delete_user %}
+                            <td class="text-right">
+                                <div class="actions">
+                                    {% if perms.auth.delete_user %}
+                                            {% endif %}
+                                            {% if perms.auth.delete_user %}
+                                            <a class="btn btn-sm  btn-primary" data-toggle="modal" data-target="#modal-default_roles_{{user.user.id}}" href="#edit_personal_details"><i class="fas fa-eye"></i></a>
+                                            {% endif %}
+                                            {% if perms.auth.delete_user %}
+                                            <a href="{% url 'blockuser' user.user.id %}" class="btn btn-primary btn-sm bg-danger-light">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+
+                             </td>
+                            {% endif %}
+
+                        </tr>
+
+                        <div class="modal fade" id="modal-default_roles_{{user.user.id}}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Roles Information</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{% url 'AssignUserRole' user.user.id %}" enctype="multipart/form-data" method="POST">
+                                            {% csrf_token %}
+
+                                            <div class="form-group">
+                                                <label>Available Roles</label>
+                                             {% for gp in groups_list %}
+                                             <br>
+                                                <input type="checkbox" name="role_{{gp.id}}" value="{{gp.id}}"
+                                                class="checkmail">{{gp.name}}
+                                                {% endfor %}
+                                
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                    <input type="submit" class="btn btn-primary" value="Save changes">
+                                                </div>
+                                        </form>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+        </section>
+        
+</div>
+</div>
+<script>
+    $(function() {
+        $("#example1").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+</script>
+{% load static %} {% include "includes/footer.html" %}

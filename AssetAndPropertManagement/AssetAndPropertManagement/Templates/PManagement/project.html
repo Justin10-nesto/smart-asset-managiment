@@ -1,0 +1,49 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+    <div class="content container-fluid">
+        <section class="content-header">
+    <div class="page-header">
+      <div class="row align-items-center">
+        <div class="col">
+          <h3 class="page-title">Project Details</h3>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'DashboardPage' %}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Project Details</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+        </section>
+        <section class="content">
+          <div class="container-fluid">
+
+    <section class="section project">
+      <div class="row">
+        <div class="card">
+          <div class="card-body pt-3">
+            <!-- Bordered Tabs -->
+            <ul class="nav nav-tabs nav-tabs-bordered">
+
+              <li class="nav-item">
+                {% if perms.TaskManagement.view_project or perms.TaskManagement.change_project or perms.TaskManagement.add_project or perms.TaskManagement.delete_project %}
+                <a class="nav-link active" href="{% url 'projectOverViewList' project_info.id %}">Overview</a>
+              </li>
+              {% endif %}
+              {% if perms.TaskManagement.view_subproject or perms.TaskManagement.change_subproject or perms.TaskManagement.add_subproject or perms.TaskManagement.delete_subproject %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'subProjectList' project_info.id %}">Sub Projects</a>
+              </li>
+              {% endif %}
+              {% if perms.OverManagement.view_budgetitem or perms.OverManagement.change_budgetitem or perms.OverManagement.add_budgetitem or perms.OverManagement.delete_budgetitem %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'subprojectBudgetList' project_info.id %}">Project Budget</a>
+              </li>
+              {% endif %}
+              {% if perms.TaskManagement.view_projectuser or perms.TaskManagement.change_projectuser or perms.TaskManagement.add_projectuser or perms.TaskManagement.delete_projectuser %}
+              <li class="nav-item">
+                <a  class="nav-link" href="{% url 'projectTeamUsers' project_info.id %}">Members</a>
+              </li>
+              {% endif %}
+
+            </ul>

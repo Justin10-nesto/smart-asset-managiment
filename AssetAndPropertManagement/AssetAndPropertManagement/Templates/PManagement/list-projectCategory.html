@@ -1,0 +1,168 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+    <div class="content container-fluid">
+        <section class="content-header">
+            <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">Project Category</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'DashboardPage' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Project Category</li>
+                    </ul>
+                </div>
+                <div class="col-auto text-right float-right ml-auto">
+                    <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal" data-target="#modal-default_add"
+                        href="#edit_personal_details">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                            stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M12 5l0 14" />
+                            <path d="M5 12l14 0" />
+                        </svg>
+                        Create new report
+                    </a>
+                </div>
+            </div>
+        </div></section>
+
+        <div class="modal fade" id="modal-default_add">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Project Category Information</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'projectCategoryList' %}" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Category</label>
+                                <input type="text" name="name" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Description</label>
+                                <input type="text" name="description" class="form-control">
+                            </div>
+
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-primary" value="Save changes">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+   
+        <div class="row">
+            <div class="table-responsive">
+                <table id="example1" class="table table-hover table-center mb-0">
+                    <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            {% if perms.OverManagement.change_projectcategory or perms.OverManagement.delete_projectcategory %}
+                            <th class="text-right">Action</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    {% for category in projectCategory_info %}
+                    <tr>
+                        <td>{{category.id}}</td>
+                        <td>{{category.name}}</td>
+                        <td>{{category.description}}</td>
+                        {% if perms.OverManagement.change_projectcategory or perms.OverManagement.delete_projectcategory %}
+                        <td class="text-right">
+                            <div class="actions">
+                                {% if perms.OverManagement.change_projectcategory %}
+                                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                    data-target="#modal-default_{{category.id}}" href="#edit_personal_details">
+                                    <i class="fas fa-pen"></i>Edit
+                                    </a>
+                                </a>
+                                {% endif %} {% if perms.OverManagement.delete_projectcategory %}
+                                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                    data-target="#modal-default_delete{{category.id}}" href="#edit_personal_details">
+                                    <i class="fas fa-trash"></i>Delete
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td> {% endif %}
+
+                    </tr>
+                    <div class="modal fade" id="modal-default_delete{{category.id}}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Delete Project Category Information</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <h3>Are you sure you want to delete Project Category of
+                                        <b>{{category.name}}</b>
+                                    </h3>
+                                    <a href="{% url 'projectCategoryDelete' category.id %}"
+                                        class="btn btn-primary bg-danger-light text-right">
+                                        Delete
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="modal-default_{{category.id}}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Edit Project Category Information</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{% url 'projectCategoryEdit' category.id %}"
+                                        enctype="multipart/form-data" method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label>Category</label>
+                                            <input type="text" value="{{category.name}}" name="name"
+                                                class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <input type="text" value="{{category.description}}" name="description"
+                                                class="form-control">
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default"
+                                                data-dismiss="modal">Close</button>
+                                            <input type="submit" class="btn btn-primary" value="Save changes">
+                                        </div>
+                                    </form>
+                                </div>
+
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+        </section>
+</div>
+{% include "includes/footer.html" %}

@@ -1,0 +1,238 @@
+    {% load static %} {% include "includes/header.html" %} {% include "includes/subTask Sidebar.html" %}
+
+    <div class="content-wrapper bg-white">
+        <div class="content container-fluid">
+          <section class="content-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">{{project_info.name}}</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'subProject' project_info.id %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Project Phases</li>
+                        </ul>
+                    </div>
+                    {% if perms.TaskManagement.add_projectphase %}
+                    <div class="col-auto text-right float-right ml-auto">
+                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal" data-target="#modal-default_add"
+                            href="#edit_personal_details">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M12 5l0 14" />
+                                <path d="M5 12l14 0" />
+                            </svg>
+                            Create new Phase 
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+          </section>
+        </div>
+
+            <div class="modal fade" id="modal-default_add">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Add Phase Information</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <label for="floatingSelect">Project Phase</label>
+
+                                <select class="form-select" name="phase" id="floatingSelect"
+                                    aria-label="Floating label select example">
+                                    {% for phase in phases %}
+                                    <option value="{{phase.id}}">{{phase.name}}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-group">
+                                    <label>Duration</label>
+                                    <input type="number" name="duration" class="form-control">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Quantity</label>
+                                    <select class="form-select" name="quantity" id="floatingSelect"
+                                    aria-label="Floating label select example">
+                                    <option value="Days">Days</option>
+                                    <option value="Weeks">Weeks</option>
+                                    <option value="Months">Months</option>
+                                    <option value="Years">Years</option>
+                                </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Start Date</label>
+                                    <input type="date" name="start_date" class="form-control">
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <input type="submit" class="btn btn-primary" value="Save changes">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        <section class="content">
+            <div class="container-fluid">
+    
+                {% if project_phase_info %}
+                <div class="row">
+                    <div class="table-responsive">
+                        <table id="example1" class="table table-hover table-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Name</th>
+
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Status</th>
+                                    <th>Progress</th>
+                                    {% if perms.TaskManagement.change_projectphase or perms.TaskManagement.delete_projectphase %}
+                                    <th class="text-right">Action</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            {% for phase in project_phase_info %}
+                            <tr>
+                                <td>{{phase.id}}</td>
+                                <td><a href="{% url 'taskList' phase.id %}">{{phase.phase.name}}</a></td>
+                                <td>{{phase.phase_start_date}}</td>
+                                <td>{{phase.phase_end_date}}</td>
+        
+                                {% if phase.status == 'COMPLETED' or phase.status == 'COMPLETED VERIFIED' %}
+                                <td><span class=" badge bg-green">{{phase.status}}</span></td>
+                                {% elif phase.status == 'ON GOINING' %}
+                                <td><span class=" badge bg-red-light">{{phase.status}}</span></td>
+                                {% else %}
+                                <td><span class=" badge bg-danger">{{phase.status}}</span></td>
+                                {% endif %}
+                                        <td>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{phase.progressBar}}%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">{{phase.progressBar}}%</div>
+                                    </div>
+                                </td>
+                                {% if perms.TaskManagement.change_projectphase or perms.TaskManagement.delete_projectphase %}
+                                <td class="text-right">
+                                    {% if phase.status != 'COMPLETED VERIFIED' %}
+                                    <div class="actions">
+                                        {% if perms.TaskManagement.change_task %}
+                                        <a class="btn btn-primary bg-success-light mr-2"
+                                          href="{% url 'projectPhaseCompletedVerified' phase.id %}">
+                                          <i class="fas fa-pen"></i>Verification
+                                        </a>
+                                        {% endif %} 
+                                        {% if perms.TaskManagement.change_projectphase %}
+                                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                            data-target="#modal-default_{{phase.id}}" href="#edit_personal_details">
+                                            <i class="fas fa-pen"></i>Edit
+                                            </a>
+                                        </a>
+                                        {% endif %} {% if perms.TaskManagement.delete_projectphase %}
+                                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                            data-target="#modal-default_delete{{phase.id}}" href="#edit_personal_details">
+                                            <i class="fas fa-trash"></i>Delete
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+
+                                </td> 
+                                {% endif %}
+
+                            </tr>
+                            <div class="modal fade" id="modal-default_delete{{phase.id}}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Delete Project Phases Information</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h3>Are you sure you want to delete Project Phases of
+                                                <b>{{phase.name}}</b>
+                                            </h3>
+                                            <a href="{% url 'projectPhaseDelete' phase.id %}"
+                                                class="btn btn-primary bg-danger-light text-right">
+                                                Delete
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="modal-default_{{phase.id}}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Edit Project Phases Information</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{% url 'projectPhaseEdit' project_info.id phase.id %}"
+                                                enctype="multipart/form-data" method="POST">
+                                                {% csrf_token %}
+
+                                                <label for="floatingSelect">Project Phase</label>
+
+                                                <select class="form-select" name="phase" id="floatingSelect"
+                                                    aria-label="Floating label select example">
+                                                    {% for phase in phases %}
+                                                    <option value="{{phase.id}}">{{phase.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="form-group">
+                                                    <label>Duration</label>
+                                                    <input type="number" name="duration" value="{{phase.duration}}" class="form-control">
+                                                </div>
+                    
+                                                <div class="form-group">
+                                                    <label>Quantity</label>
+                                                    <select class="form-select" name="quantity" id="floatingSelect"
+                                                    aria-label="Floating label select example">
+                                                    <option value="Days">Days</option>
+                                                    <option value="Weeks">Weeks</option>
+                                                    <option value="Months">Months</option>
+                                                    <option value="Years">Years</option>
+                                                </select>
+                                                </div>
+                    
+                                                <div class="form-group">
+                                                    <label>Start Date</label>
+                                                    <input type="date" name="start_date" class="form-control">
+                                                </div>                                        <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default"
+                                                        data-dismiss="modal">Close</button>
+                                                    <input type="submit" class="btn btn-primary" value="Save changes">
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
+        </div>
+    </section>
+</div>
+
+    {% include "includes/footer.html" %}

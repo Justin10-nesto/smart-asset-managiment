@@ -1,0 +1,156 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/sidebar.html" %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Project Report</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">Project Report</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+      <div class="card-body">
+        
+        <div class="row">
+          <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
+            <div class="row">
+              <H1 class=" align-center text-center">{{project_info.name | upper}} Report</H1>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Number of Project</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.NumbeOfProject}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Completed Projects </span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.Completed}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Continuinig Projects</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.Progress}} </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Stopped Project</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.Stopped}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">start Date  </span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.start_endDate.start}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Estimated End Date  </span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.start_endDate.end}} </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Estimated project duration</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.start_endDate.duration}} Days</span>
+                  </div>
+                </div>
+              </div><div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Estimated budget</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.production_cost}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Total amount spent</span>
+                    <span class="info-box-number text-center text-muted mb-0">2000</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+            <h3 class="text-primary">{{project_info.project.name | upper}}</h3>
+            <h3 class="text-primary"> - {{project_info.name}}</h3>
+            <p class="text-muted">{{project_info.description}}</p>
+            <br>
+            <div class="text-muted">
+              <p class="text-sm">Client Company
+                <b class="d-block">NHC</b>
+              </p>
+              <p class="text-sm">Project Leader
+                {% if userProjects %}
+                {% for prUser in userProjects %}
+                <b class="d-block">{{prUser.user.first_name}} {{prUser.user.last_name}}</b>
+                {% endfor %}
+                {% endif %}
+              </p>
+            </div>
+
+            <h5 class="mt-5 text-muted">Project Deliverables</h5>
+            <ul class="list-unstyled">
+              {% if project_info.number_delivarables %}  
+              {% for delivarable in project_info.number_delivarables %}   
+              <li>
+                <a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-pdf"></i> {{delivarable.delivarable.name}}
+                  {% if delivarable.status.COMPLETED == 1 %}
+                  <span class=" badge bg-green">COMPLETED</span>
+                  {% elif delivarable.status.GOINING == 1 %}
+                  <span class=" badge bg-red-light">ON GOINING</span>
+                  {% elif delivarable.status.Verified == 1 %}
+                  <span class=" badge bg-red-light">VERIFIED</span>
+                  {% elif delivarable.status.Initial == 1 %}
+                  <span class=" badge bg-red-light">ON Initial Process</span>
+                  {% else %}
+                  <span class=" badge bg-danger">Not Yet</span>
+                  {% endif %}
+            
+                </a>
+              </li>
+              {% endfor %}
+              {% endif %}
+              </ul>
+          </div>
+        </div>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+
+  </section>
+  <!-- /.content -->
+</div>
+{% include "includes/footer.html" %}

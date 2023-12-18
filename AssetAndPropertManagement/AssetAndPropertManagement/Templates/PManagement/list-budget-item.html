@@ -1,0 +1,167 @@
+{% load static %}
+{% include "includes/header.html" %}
+{% include "PManagement/project.html" %}
+
+
+  <div class="row">
+
+    <h6 class=" card-subtitle mb-2 mt-3">
+      <div class="col-auto text-right ml-auto">
+        {% if perms.OverManagement.add_budgetitem %}
+        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+          data-target="#modal-default_add" href="#edit_personal_details">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+            stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 5l0 14" />
+            <path d="M5 12l14 0" />
+          </svg>
+          Create new cost
+        </a>
+        {% endif %}
+
+        <a class="btn btn-primary bg-success-light mr-2" href="{% url 'invoice' 1 %}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+            stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 5l0 14" />
+            <path d="M5 12l14 0" />
+          </svg>
+          Generate Invoice
+        </a>
+      </div>
+    </h6>
+    
+    <div class="modal fade" id="modal-default_add">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">Add project Cost Information</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <form method="POST">
+                      {% csrf_token %}
+                      {% for item in items %}
+                      <div class="form-group">
+                          <label>{{item.name}}</label>
+                          <input type="number" value="0" name="item_{{item.id}}" class="form-control">
+                      </div>
+                      {% endfor %}
+                    
+                      <div class="modal-footer justify-content-between">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          <input type="submit" class="btn btn-primary" value="Save changes">
+                      </div>
+                  </form>
+              </div>
+          </div>
+
+      </div>
+  </div>
+  {% if project_Budget %}
+    <div class="table-responsive">
+      <table id="example1" class="table table-hover table-center mb-0">
+        <thead>
+          <tr>
+            <th>S/N</th>
+            <th>Name</th>
+            <th>Price</th>
+            {% if perms.OverManagement.change_project or perms.OverManagement.delete_project %}
+            <th class="text-right">Action</th>
+            {% endif %}
+          </tr>
+        </thead>
+        {% for buget in project_Budget %}
+        <tr>
+          <td>{{buget.id}}</td>
+          <td>{{buget.item.name}}</td>
+          <td>{{buget.price}}</td>
+          {% if perms.OverManagement.change_project_Budget or perms.OverManagement.delete_project_Budget %}
+          <td class="text-right">
+            <div class="actions">
+              {% if perms.OverManagement.change_project_Budget %}
+              <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                data-target="#modal-default_{{buget.id}}" href="#edit_personal_details">
+                <i class="fas fa-pen"></i>Edit
+              </a>
+              </a>
+              {% endif %} {% if perms.OverManagement.delete_project_Budget %}
+              <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                data-target="#modal-default_delete{{buget.id}}" href="#edit_personal_details">
+                <i class="fas fa-trash"></i>Delete
+              </a>
+              {% endif %}
+            </div>
+            {% endif %}
+
+          </td> 
+
+        </tr>
+        <div class="modal fade" id="modal-default_delete{{buget.id}}">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">Delete Budget Information</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <h3>Are you sure you want to delete cost of
+                  <b>{{buget.item.name}}</b>
+                </h3>
+                <a href="{% url 'subprojectBudgetDelete' buget.id %}"
+                  class="btn btn-primary bg-danger-light text-right">
+                  Delete
+                </a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="modal-default_{{buget.id}}">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">Edit Budget Information</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form action="{% url 'subprojectBudgetEdit' buget.id %}" enctype="multipart/form-data"
+                  method="POST">
+                  {% csrf_token %}
+                  
+                  <div class=" row mb-3">
+                    <label for="{{buget.name}}" class=" col-sm-3 col-form-label">{{buget.item.name}}</label>
+                    <div class=" col-sm-8">
+                      <input type="number" id="{{buget.name}}" value="{{buget.price}}" name="price"  class="form-control">
+                    </div>
+                                                  <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-primary" value="Save changes">
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+        </tbody>
+        <tfoot>
+        </tfoot>
+
+      </table>
+    </div>
+    {% endif %}
+
+</div>
+{% include "includes/footer.html" %}

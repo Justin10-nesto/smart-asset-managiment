@@ -1,0 +1,150 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/subTask Sidebar.html" %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">{{project_info.name}}</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'subProject' project_info.id %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Skill</li>
+                    </ul>
+                </div>
+                <div class="col-auto text-right float-right ml-auto">
+                    <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal" data-target="#modal-default_add"
+                        href="#edit_personal_details">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                            stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M12 5l0 14" />
+                            <path d="M5 12l14 0" />
+                        </svg>
+                        Create new subskills
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-default_add">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Content Type Information</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'subskillList' project_info.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Skill</label>
+                                <input type="text" name="name" class="form-control">
+                            </div>
+
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-primary" value="Save changes">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="table-responsive">
+                <table id="example1" class="table table-hover table-center mb-0">
+                    <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Name</th>
+                            {% if perms.OverManagement.change_subskill or perms.OverManagement.delete_subskill %}
+                            <th class="text-right">Action</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    {% for subskill in skill_info %}
+                    <tr>
+                        <td>{{subskill.id}}</td>
+                        <td>{{subskill.name}}</td>
+                        {% if perms.OverManagement.change_skill or perms.OverManagement.delete_skill %}
+                        <td class="text-right">
+                            <div class="actions">
+                                {% if perms.OverManagement.change_skill %}
+                                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                    data-target="#modal-default_{{subskill.id}}" href="#edit_personal_details">
+                                    <i class="fas fa-pen"></i>Edit
+                                    </a>
+                                </a>
+                                {% endif %} {% if perms.OverManagement.delete_skill %}
+                                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                    data-target="#modal-default_delete{{subskill.id}}" href="#edit_personal_details">
+                                    <i class="fas fa-trash"></i>Delete
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td> {% endif %}
+
+                    </tr>
+                    <div class="modal fade" id="modal-default_delete{{subskill.id}}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Delete Content Type Information</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <h3>Are you sure you want to delete content type of
+                                        <b>{{subskill.name}}</b>
+                                    </h3>
+                                    <a href="{% url 'subskillDelete' subskill.id %}"
+                                        class="btn btn-primary bg-danger-light text-right">
+                                        Delete
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="modal-default_{{subskill.id}}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Edit Content Type Information</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{% url 'subskillEdit' subskill.id %}"
+                                        enctype="multipart/form-data" method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label>subskill</label>
+                                            <input type="text" value="{{subskill.name}}" name="name"
+                                                class="form-control">
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default"
+                                                data-dismiss="modal">Close</button>
+                                            <input type="submit" class="btn btn-primary" value="Save changes">
+                                        </div>
+                                    </form>
+                                </div>
+
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "includes/footer.html" %}

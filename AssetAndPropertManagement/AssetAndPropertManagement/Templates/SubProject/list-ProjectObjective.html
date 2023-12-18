@@ -1,0 +1,196 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/subTask Sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+    <div class="content container-fluid">
+      <section class="content-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">{{project_info.name}}</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'subProject' project_info.id %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Objectives</li>
+                    </ul>
+                </div>
+                {% if perms.TaskManagement.add_projectobjective %}
+                <div class="col-auto text-right float-right ml-auto">
+                    <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                        data-target="#modal-default_add" href="#edit_personal_details">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                            stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M12 5l0 14" />
+                            <path d="M5 12l14 0" />
+                        </svg>
+                        Create new Objectivess
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+      </section>
+    </div>
+
+        <div class="modal fade" id="modal-default_add">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add project Objectives Information</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'projectObjectiveList' project_info.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Objectives</label>
+                                <input type="text" name="name" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Production Cost</label>
+                                <input type="text" name="production_cost" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Currency</label>
+                                <input type="text" name="currency" class="form-control">
+                            </div>
+                            <label for="floatingSelect">Category</label>
+
+                            <select class="form-select" name="category" id="floatingSelect"
+                                aria-label="Floating label select example">
+                                <option value="Main objective">Main objective</option>
+                                <option value="specific objective">specific objective</option>
+                            </select>
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-primary" value="Save changes">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    <section class="content">
+        <div class="container-fluid">
+        
+            {% if Objectives_info %}
+
+            <div class="row">
+                <div class="table-responsive">
+                    <table id="example1" class="table table-hover table-center mb-0">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Production Cost</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        {% for obj in Objectives_info %}
+                        <tr>
+                            <td>{{obj.id}}</td>
+                            <td>{{obj.objective}}</td>
+                            <td>{{obj.category}}</td>
+                            <td>{{obj.currency}} {{obj.production_cost}}/=</td>
+                            {% if perms.TaskManagement.change_projectobjective or perms.TaskManagement.delete_projectobjective %}
+                            <td class="text-right">
+                                <div class="actions">
+                                    {% if perms.TaskManagement.change_projectobjective %}
+                                    <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                        data-target="#modal-default_{{obj.id}}" href="#edit_personal_details">
+                                        <i class="fas fa-pen"></i>Edit
+                                    </a>
+                                    </a>
+                                    {% endif %} {% if perms.TaskManagement.delete_projectobjective %}
+                                    <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                        data-target="#modal-default_delete{{obj.id}}" href="#edit_personal_details">
+                                        <i class="fas fa-trash"></i>Delete
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td> {% endif %}
+
+                        </tr>
+                        <div class="modal fade" id="modal-default_delete{{obj.id}}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Delete Content Type Information</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h3>Are you sure you want to delete content type of
+                                            <b>{{obj.name}}</b>
+                                        </h3>
+                                        <a href="{% url 'projectObjectiveDelete' obj.id %}"
+                                            class="btn btn-primary bg-danger-light text-right">
+                                            Delete
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="modal-default_{{obj.id}}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Edit Content Type Information</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{% url 'projectObjectiveEdit' obj.id %}" enctype="multipart/form-data"
+                                            method="POST">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label>project Objectives</label>
+                                                <input type="text" value="{{obj.objective}}" name="name"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Production Cost</label>
+                                                <input type="text" name="production_cost" value="{{obj.production_cost}}"
+                                                    class="form-control">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Currency</label>
+                                                <input type="text" name="currency" value="{{obj.currency}}" class="form-control">
+                                            </div>
+                                            <label for="floatingSelect">Category</label>
+
+                                            <select class="form-select" name="category" id="floatingSelect"
+                                                aria-label="Floating label select example">
+                                                <option value="Main objective">Main objective</option>
+                                                <option value="specific objective">specific objective</option>
+                                            </select>
+
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default"
+                                                    data-dismiss="modal">Close</button>
+                                                <input type="submit" class="btn btn-primary" value="Save changes">
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </section>
+</div>
+{% include "includes/footer.html" %}

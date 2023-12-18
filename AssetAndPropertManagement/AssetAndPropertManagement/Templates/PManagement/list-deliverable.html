@@ -1,0 +1,209 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+    <div class="content container-fluid">
+        <section class="content-header">
+            <div class="page-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">Project</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'DashboardPage' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Project Deliverables</li>
+                        </ul>
+                    </div>
+                    {% if perms.OverManagement.add_deliverable %}
+                    <div class="col-auto text-right float-right ml-auto">
+                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                            data-target="#modal-default_add" href="#edit_personal_details">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M12 5l0 14" />
+                                <path d="M5 12l14 0" />
+                            </svg>
+                            Create new project Delivarable
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <div class="modal fade" id="modal-default_add">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Project Delivarable Information</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Delivarable name</label>
+                                <input type="text" name="name" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <label>description</label>
+                                <input type="text" name="description" class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Output</label>
+                                <input type="text" name="output" class="form-control">
+                            </div>
+
+                            <label for="floatingSelect">Phase</label>
+
+                            <select class="form-select" name="Phase" id="floatingSelect"
+                                aria-label="Floating label select example">
+                                {% for Phase in phases %}
+                                <option value="{{Phase.id}}">{{Phase.name}}</option>
+                                {% endfor %}
+                            </select>
+
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-primary" value="Save changes">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                {% if Deliverable_info %}
+                <div class="row">
+                    <div class="table-responsive">
+                        <table id="example1" class="table table-hover table-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Output Format</th>
+                                    <th>Phase</th>
+                                    {% if perms.OverManagement.change_deliverable or perms.OverManagement.delete_deliverable %}
+                                    <th class="text-right">Action</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            {% for deliverable in Deliverable_info %}
+                            <tr>
+                                <td>{{deliverable.id}}</td>
+                                <td>{{deliverable.name}}</td>
+                                <td>{{deliverable.description}}</td>
+                                <td>{{deliverable.output}}</td>
+                                <td>{{deliverable.phase.name}}</td>
+                                {% if perms.OverManagement.change_deliverable or perms.OverManagement.delete_deliverable %}
+                                <td class="text-right">
+                                    <div class="actions">
+                                        {% if perms.OverManagement.change_deliverable %}
+                                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                            data-target="#modal-default_{{deliverable.id}}"
+                                            href="#edit_personal_details">
+                                            <i class="fas fa-pen"></i>Edit
+                                        </a>
+                                        {% endif %} {% if perms.OverManagement.delete_deliverable %}
+                                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                            data-target="#modal-default_delete{{deliverable.id}}"
+                                            href="#edit_personal_details">
+                                            <i class="fas fa-trash"></i>Delete
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </td> {% endif %}
+
+                            </tr>
+                            <div class="modal fade" id="modal-default_delete{{deliverable.id}}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Delete deliverable Information</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h3>Are you sure you want to delete deliverable of
+                                                <b>{{deliverable.name}}</b>
+                                            </h3>
+                                            <a href="{% url 'deliverableDelete' deliverable.id %}"
+                                                class="btn btn-primary bg-danger-light text-right">
+                                                Delete
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="modal-default_{{deliverable.id}}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Edit deliverable Information</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{% url 'deliverableEdit' deliverable.id %}"
+                                                enctype="multipart/form-data" method="POST">
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <label>project name</label>
+                                                    <input type="text" name="name" value="{{deliverable.name}}"
+                                                        class="form-control">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Description</label>
+                                                    <input type="text" name="description"
+                                                        value="{{deliverable.description}}" class="form-control">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Output</label>
+                                                    <input type="text" value="{{deliverable.output}}" name="output"
+                                                        class="form-control">
+                                                </div>
+
+                                                <label for="floatingSelect">Phase</label>
+
+                                                <select class="form-select" name="Phase" id="floatingSelect"
+                                                    aria-label="Floating label select example">
+                                                    {% for Phase in phases %}
+                                                    <option value="{{Phase.id}}">{{Phase.name}}</option>
+                                                    {% endfor %}
+                                                </select>
+
+                                                <div class="modal-footer justify-content-between">
+                                                    <button type="button" class="btn btn-default"
+                                                        data-dismiss="modal">Close</button>
+                                                    <input type="submit" class="btn btn-primary" value="Save changes">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+</div>
+
+{% include "includes/footer.html" %}

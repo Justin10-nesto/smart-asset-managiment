@@ -1,0 +1,60 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/subTask Sidebar.html" %}
+<style>
+  .margin2 {
+    margin: 10px 60px;
+  }
+</style>{% load static %} {% include "includes/header.html" %} {% include "includes/subTask Sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+  <section class="content">
+    <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-2">
+
+              <!-- Profile Image -->
+              <div class="card card-primary card-outline">
+                <div class="card-body box-profile">
+                  <div class="text-center">
+                    <img class="profile-user-img img-fluid img-circle" src="{% static group.file.url %}"
+                      alt="{{teams.name}}">
+                  </div>
+
+                  <h3 class="profile-username text-center">{{group.name}}</h3>
+
+                  <p class="text-muted text-center">{{group.subject.subject_name}}</p>
+
+                  <ul class="list-group list-group-unbordered mb-3">
+                    <li class="list-group-item">
+                      <b>Task assigned</b> <a class="float-right">{{Project_team.taskSummary.count}}</a>
+                    </li>
+                    <li class="list-group-item">
+                      <b>Task complited</b> <a class="float-right">{{Project_team.taskSummary.Completed}}</a>
+                    </li>
+                    <li class="list-group-item">
+                      <b>Task complited Verified</b> <a class="float-right">{{Project_team.taskSummary.CompletedVerified}}</a>
+                    </li>
+                    <li class="list-group-item">
+                      <b> In Progress Task</b> <a class="float-right">{{Project_team.taskSummary.OnGoing}}</a>
+                    </li>
+                  </ul>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+
+            </div>
+        
+        <div class="col-md-9">
+          <div class="card">
+            <div class="card-header p-2">
+              <ul class="nav nav-pills">
+                {% if Project_team %}
+                <li class="nav-item"><a class="nav-link active" href="{% url 'TeamcomunicationList'  project_info.id  teams.id %}">comm</a></li>
+                <!-- <li class="nav-item"><a class="nav-link" href="{% url 'TeamcomunicationList'  project_info.id  teams.id %}">communications</a></li> -->
+                <li class="nav-item"><a class="nav-link" href="{% url 'SubTaskList' project_info.id  teams.id %}">Task</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'projectTeamMemberList' project_info.id  teams.id %}">Members</a></li>
+                {% endif %}
+              </ul>
+            </div>
+
+        

@@ -1,0 +1,202 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/subTask Sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+    <div class="content container-fluid">
+        <section class="content-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title">{{project_info.name}}</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'subProject' project_info.id %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">events</li>
+                    </ul>
+                </div>
+                {% if perms.TaskManagement.add_projectevent %}
+                <div class="col-auto text-right float-right ml-auto">
+                    <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                        data-target="#modal-default_add" href="#edit_personal_details">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                            stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M12 5l0 14" />
+                            <path d="M5 12l14 0" />
+                        </svg>
+                        Create new events
+                    </a>
+                </div>
+                
+        <div class="modal fade" id="modal-default_add">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add project events Information</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'projecteventList' project_info.id %}" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>events Tittle</label>
+                                <input type="text" name="message" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea type="text" name="descriotion" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" name="date" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Time</label>
+                                <input type="time" name="time" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Location</label>
+                                <input type="text" name="location" class="form-control">
+                            </div>                            
+                            <div class="form-group">
+                                <label>Venue</label>
+                                <input type="text" name="venue" class="form-control">
+                            </div>                            
+                            <div class="modal-footer justify-content-between">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-primary" value="Save changes">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">    
+            {% if project_events %}
+            <div class="row">
+                <div class="table-responsive">
+                    <table id="example1" class="table table-hover table-center mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Tittle</th>
+                                <th>Description</th>
+                                <th>Location</th>
+                                <th>Venue</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        {% for obj in project_events %}
+                        <tr>
+                            <td>{{obj.date}} {{obj.time}}</td>
+                            <td>{{obj.message}}</td>
+                            <td>{{obj.descriotion}}</td>
+                            <td>{{obj.location}}</td>
+                            <td>{{obj.venue}}</td>
+                            {% if perms.TaskManagement.change_projectevent or perms.TaskManagement.delete_projectevent %}
+                            <td class="text-right">
+                                <div class="actions">
+                                    {% if perms.TaskManagement.change_projectevent %}
+                                    <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                        data-target="#modal-default_{{obj.id}}" href="#edit_personal_details">
+                                        <i class="fas fa-pen"></i>Edit
+                                    </a>
+                                    </a>
+                                    {% endif %} {% if perms.TaskManagement.delete_projectevent %}
+                                    <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                        data-target="#modal-default_delete{{obj.id}}" href="#edit_personal_details">
+                                        <i class="fas fa-trash"></i>Delete
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td> {% endif %}
+
+                        </tr>
+                        <div class="modal fade" id="modal-default_delete{{obj.id}}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Delete Event Information</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h3>Are you sure you want to delete event of
+                                            <b>{{obj.date}}</b> about {{obj.message}}
+                                        </h3>
+                                        <a href="{% url 'projecteventDelete' obj.id %}"
+                                            class="btn btn-primary bg-danger-light text-right">
+                                            Delete
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="modal-default_{{obj.id}}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Edit Content Type Information</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{% url 'projecteventEdit' obj.id %}" enctype="multipart/form-data"
+                                            method="POST">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label>events Tittle</label>
+                                                <input type="text" name="message" value="{{obj.message}}" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Description</label>
+                                                <textarea type="text" rows="4" name="descriotion" class="form-control">{{obj.descriotion}}</textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Date</label>
+                                                <input type="date" name="date" value="{{obj.date}}" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Time</label>
+                                                <input type="time" name="time" value="{{obj.time}}" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Location</label>
+                                                <input type="text" name="location" value="{{obj.location}}" class="form-control">
+                                            </div>                            
+                                            <div class="form-group">
+                                                <label>Venue</label>
+                                                <input type="text" name="venue" value="{{obj.venue}}" class="form-control">
+                                            </div>                            
+                                            <div class="modal-footer justify-content-between">
+                                                <button type="button" class="btn btn-default"
+                                                    data-dismiss="modal">Close</button>
+                                                <input type="submit" class="btn btn-primary" value="Save changes">
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% include "includes/footer.html" %}

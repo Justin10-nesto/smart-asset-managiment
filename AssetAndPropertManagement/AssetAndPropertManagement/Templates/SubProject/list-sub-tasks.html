@@ -1,0 +1,241 @@
+{% load static %} {% include "includes/header.html" %}
+
+{% include "SubProject/list-projectTeamContent.html" %}
+{% if tasks %}
+    {% for task in tasks %}
+    <div class="card">
+      <div class="card-body">
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingOne">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseOne_{task.id}" aria-expanded="false"
+                aria-controls="flush-collapseOne_{task.id}">
+                <span>
+                  <B>{{task.project.phase.name}}: </B>{{task.name}}
+                </span>
+              </button>
+            </h2>
+            <div id="flush-collapseOne_{task.id}" class="accordion-collapse collapse"
+              aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body">
+
+                <div class=" d-flex">
+                  <h3 class="card-title">
+                  </h3>
+                  {% if perms.TaskManagement.add_subtasks %}
+
+                  <a class="btn btn-primary bg-success-light mr-2 ms-auto" data-toggle="modal"
+                    data-target="#modal-default_add_task_{{task.id}}" href="#edit_personal_details">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                      viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M12 5l0 14" />
+                      <path d="M5 12l14 0" />
+                    </svg>
+                    Create new sub tasks
+                  </a>
+                  {% endif %}
+                </div>
+                {% if task.subtasks %}
+
+                <div class="row">
+                  <div class="table-responsive">
+                    <table id="example1" class="table table-hover table-center mb-0">
+                      <thead>
+                        <tr>
+                          <th>User</th>
+                          <th>SubTask</th>
+                          <th>Comment</th>
+                          <th>Status</th>
+                          {% if perms.TaskManagement.change_subtasks or perms.TaskManagement.can_verify_subTask or perms.TaskManagement.delete_subtasks %}
+                          <th class="text-right">Action</th>
+                          {% endif %}
+                        </tr>
+                      </thead>
+                      {% for subtasks in task.subtasks %}
+                      <tr>
+                        <td>{{subtasks.member.user.full_name}}</td>
+                        <td>{{subtasks.name}}</td>
+                        <td>{{subtasks.recommendations}}</td>
+                        {% if subtasks.status == 'Returned' %}
+                        <td><span class=" badge bg-green">{{subtasks.status}}</span></td>
+                        {% elif subtasks.status == 'Processing' %}
+                        <td><span class=" badge bg-red-light">{{subtasks.status}}</span></td>
+                        {% else %}
+                        <td><span class=" badge bg-danger">{{subtasks.status}}</span></td>
+                        {% endif %}
+                        {% if perms.TaskManagement.change_subtasks or perms.TaskManagement.can_verify_subTask or perms.TaskManagement.delete_subtasks %}
+                        <td class="text-right">
+                          {% if subtasks.is_completed_verified %}
+                          Verified
+                          {% else %}
+                          {% if perms.TaskManagement.can_verify_subTask %}
+                          <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                            data-target="#modal-default_verify_{{subtasks.id}}" href="#edit_personal_details">
+                            <i class="fas fa-pen"></i>Verify </a>
+                          {% endif %}{% if perms.TaskManagement.change_subtasks %}
+                          <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                            data-target="#modal-default_{{subtasks.id}}" href="#edit_personal_details">
+                            <i class="fas fa-pen"></i>Edit
+                          </a>
+                          {% endif %} {% if perms.TaskManagement.delete_subtasks %}
+                          <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                            data-target="#modal-default_delete{{subtasks.id}}"
+                            href="#edit_personal_details">
+                            <i class="fas fa-trash"></i>Delete
+                          </a>
+                          {% endif %}
+                          {% endif %}
+                        </td> 
+                        {% endif %}
+                       
+                      </tr>
+                      <div class="modal fade" id="modal-default_delete{{subtasks.id}}">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title">Delete subtasks</h4>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <h3>Are you sure you want to delete subtasks of
+                                <b>{{subtasks.name}}</b>
+                              </h3>
+                              <a href="{% url 'SubTaskDelete' subtasks.id %}"
+                                class="btn btn-primary bg-danger-light text-right">
+                                Delete
+                              </a>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal fade" id="modal-default_verify_{{subtasks.id}}">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title">Delete subtasks</h4>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <h3>Are you sure you want to verify subtasks of
+                                <b>{{subtasks.name}}</b>
+                              </h3>
+                              <a href="{% url 'SubTaskVerification' subtasks.id %}"
+                                class="btn btn-primary bg-danger-light text-right">
+                                Verify
+                              </a>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal fade" id="modal-default_{{subtasks.id}}">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title">Edit Request For Resource Allocation</h4>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form action="{% url 'SubTaskEdit' subtasks.id %}"
+                                enctype="multipart/form-data" method="POST">
+                                {% csrf_token %}
+                                <div class="form-group">
+
+                                  <label for="floatingSelect">Resource Name</label>
+                                  <select class="form-select" name="category" id="floatingSelect"
+                                    aria-label="Floating label select example">
+                                    <option value="{{subtasks.id}}">{{subtasks.name}}</option>
+                                    {% for sub_task in subtasks__info %}
+                                    <option value="{{sub_task.id}}">{{sub_task.name}}</option>
+                                    {% endfor %}
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label>Quantity Allocated</label>
+                                  <input type="number" name="number_subtasks"
+                                    value="{{subtasks.number_subtasks}}" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="modal-footer justify-content-between">
+                              <button type="button" class="btn btn-default"
+                                data-dismiss="modal">Close</button>
+                              <input type="submit" class="btn btn-primary" value="Save changes">
+                            </div>
+                            </form>
+                          </div>
+
+                        </div>
+                      </div>
+                      {% endfor %}
+                      </tbody>
+
+                    </table>
+                    {% endif %}
+           
+                    <div class="modal fade" id="modal-default_add_task_{{task.id}}">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title">Add Task Information</h4>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form action="{% url 'SubTaskAdd' task.id %}" method="POST">
+                                {% csrf_token %}
+
+                                <div class="form-group">
+                                  <label>Name</label>
+                                  <input type="text" name="name" value="{{tsk.name}}"
+                                    class="form-control">
+                                </div>
+                                <div class="form-group">
+                                  <label>Description</label>
+                                  <input type="text" name="description" value="{{tsk.task_number}}"
+                                    class="form-control">
+                                </div>
+                                <div class="form-group">
+                                  <label>Team Member</label>
+
+                                  {% for team in members %}
+                                  <label class="form-check">
+                                    <input type="checkbox" name="team_{{team.id}}" value="{{team.id}}"
+                                      class="form-check-input" />
+                                    <span class="form-check-label">{{team.user.full_name}}</span>
+                                  </label>
+                                  {% endfor %}
+                                </div>
+                                <div class="modal-footer justify-content-between">
+                                  <button type="button" class="btn btn-default"
+                                    data-dismiss="modal">Close</button>
+                                  <input type="submit" class="btn btn-primary" value="Save changes">
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+{% include "includes/footer.html" %}

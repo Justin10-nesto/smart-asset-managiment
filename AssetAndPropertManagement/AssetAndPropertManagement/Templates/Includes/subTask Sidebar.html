@@ -1,0 +1,234 @@
+{% load static %}
+<body class="hold-transition layout-footer-fixed layout-fixed layout-navbar-fixed sidebar-open sidebar-mini">
+  <div class="wrapper">
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light text-sm">
+      <!-- Left navbar links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+      </ul>
+  
+      <!-- Right navbar links -->
+      <ul class="navbar-nav ml-auto">
+  
+        <!-- Messages Dropdown Menu -->
+        <li class="nav-item dropdown">
+          <a class="nav-link" data-toggle="dropdown" href="#">
+            <i class="far fa-comments"></i>
+            <span class="badge badge-danger navbar-badge">3</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <a href="#" class="dropdown-item">
+              <!-- Message Start -->
+              <div class="media">
+                <img src="{% static 'dist/img/user1-128x128.jpg' %}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                <div class="media-body">
+                  <h3 class="dropdown-item-title">
+                    Brad Diesel
+                    <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                  </h3>
+                  <p class="text-sm">Call me whenever you can...</p>
+                  <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                </div>
+              </div>
+              <!-- Message End -->
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">
+              <!-- Message Start -->
+              <div class="media">
+                <img src="{% static 'dist/img/user8-128x128.jpg' %}" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                <div class="media-body">
+                  <h3 class="dropdown-item-title">
+                    John Pierce
+                    <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
+                  </h3>
+                  <p class="text-sm">I got your message bro</p>
+                  <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                </div>
+              </div>
+              <!-- Message End -->
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">
+              <!-- Message Start -->
+              <div class="media">
+                <img src="{% static 'dist/img/user3-128x128.jpg' %}" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                <div class="media-body">
+                  <h3 class="dropdown-item-title">
+                    Nora Silvester
+                    <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
+                  </h3>
+                  <p class="text-sm">The subject goes here</p>
+                  <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                </div>
+              </div>
+              <!-- Message End -->
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+          </div>
+        </li>
+      </ul>
+    </nav>
+    <!-- /.navbar -->
+  
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-white-primary elevation-3">
+      
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Sidebar user (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+          <div class="image">
+            <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2" alt="User Image">
+          </div>
+          <div class="info">
+            <a href="#" class="d-block">NHC</a>
+          </div>
+        </div>
+  
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <!-- Add icons to the links using the .nav-icon class
+                 with font-awesome or any other icon font library -->
+
+            {% if perms.TaskManagement.view_project or perms.TaskManagement.change_project or perms.TaskManagement.add_project or perms.TaskManagement.delete_project %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url  'DashboardPage' %}" >
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                Home
+                </p>
+              </a>
+            </li>
+            {% endif %}
+
+            {% if perms.TaskManagement.view_subproject or perms.TaskManagement.change_subproject or perms.TaskManagement.add_subproject or perms.TaskManagement.delete_subproject %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'subProject' project_info.id %}" >
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                Project Home
+                </p>
+              </a>
+            </li>
+            {% endif %}
+            {% if perms.TaskManagement.view_projectphase or perms.TaskManagement.change_projectphase or perms.TaskManagement.add_projectphase or perms.TaskManagement.delete_projectphase %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url  'projectPhaseList' project_info.id %}">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                Project Phases
+                </p>
+              </a>
+            </li>
+            {% endif %}
+
+            {% if perms.TaskManagement.view_projectobjective or perms.TaskManagement.change_projectobjective or perms.TaskManagement.add_projectobjective or perms.TaskManagement.delete_projectobjective %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url  'projectObjectiveList' project_info.id %}" >
+              <i class="nav-icon fas fa-gears"></i>
+                <p>
+                Objectives
+                </p>
+              </a>
+            </li>
+            {% endif %}
+            
+            {% if perms.TaskManagement.view_projectequipment or perms.TaskManagement.change_projectequipment or perms.TaskManagement.add_projectequipment or perms.TaskManagement.delete_projectequipment %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url  'projectEquipmentList' project_info.id %}" >
+              <i class="nav-icon fas fa-toolbox"></i>
+                <p>
+                Resource Allocation
+                </p>
+              </a>
+            </li>
+            {% endif %}
+
+            {% if perms.TaskManagement.view_projectdeliverable or perms.TaskManagement.change_projectdeliverable or perms.TaskManagement.add_projectdeliverable or perms.TaskManagement.delete_projectdeliverable %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'galleryList' project_info.id %}" >
+              <i class="nav-icon bi bi-card-image"></i>
+                <p>
+                Project Gallery
+                </p>
+              </a>
+            </li>
+            {% endif %}
+            {% if perms.TaskManagement.view_projectstore or perms.TaskManagement.change_projectstore or perms.TaskManagement.add_projectstore or perms.TaskManagement.delete_projectstore %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'projectDocumentList' project_info.id %}" >
+
+              <i class="nav-icon bi bi-file-earmark-pdf-fill"></i>
+              <p>
+                Project Documents
+                </p>
+              </a>
+            </li>
+            {% endif %}
+
+            {% if perms.TaskManagement.view_projectdeliverable or perms.TaskManagement.change_projectdeliverable or perms.TaskManagement.add_projectdeliverable or perms.TaskManagement.delete_projectdeliverable %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'projectDeliverableList' project_info.id %}" >
+              <i class="nav-icon bi bi-file-earmark-pdf-fill"></i>
+                <p>
+                Project Deliverables
+                </p>
+              </a>
+            </li>
+            {% endif %}
+
+            {% if perms.TaskManagement.view_userreport or perms.TaskManagement.change_userreport or perms.TaskManagement.add_userreport or perms.TaskManagement.delete_userreport %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url  'userReportList' project_info.id %}" >
+                <i class="nav-icon fas fa-book-reader"></i>
+                <p>
+                  Task Reports
+                </p>
+              </a>
+            </li>
+            {% endif %}
+              
+            {% if perms.OverManagement.view_team or perms.OverManagement.change_team or perms.OverManagement.add_team or perms.OverManagement.delete_team %} 
+            <li class="nav-item">
+              <a class="nav-link" href="{% url  'TeamManagementList' project_info.id %}" >
+                <i class="nav-icon bi bi-people-fill"></i>
+                <p>
+                  Team Management
+                </p>
+              </a>
+            </li>
+            {% endif %}
+            {% if perms.TaskManagement.view_projectevent or perms.TaskManagement.change_projectevent or perms.TaskManagement.add_projectevent or perms.TaskManagement.delete_projectevent %} 
+            <li class="nav-item">
+              <a class="nav-link" href="{% url  'projecteventList' project_info.id %}" >
+                <i class="nav-icon far fa-calendar-alt"></i>
+                <p>
+                  Events
+                </p>
+              </a>
+            </li>
+            {% endif %}
+            {% if perms.TaskManagement.can_view_report %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'projectReport' project_info.id %}" >
+                <i class="nav-icon fas fa-book-open"></i>
+                <p>
+                  Generating Reports
+                </p>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+      </div>
+      <!-- /.sidebar -->
+    </aside>
+  

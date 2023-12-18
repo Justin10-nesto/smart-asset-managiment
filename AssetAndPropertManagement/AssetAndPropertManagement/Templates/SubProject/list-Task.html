@@ -1,0 +1,393 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/subTask Sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+    <div class="content container-fluid">
+      <section class="content-header">
+        <div class="row align-items-center">
+          <div class="col">
+            <h3 class="page-title">Project Details</h3>
+            <ul class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{% url 'DashboardPage' %}">Dashboard</a></li>
+              <li class="breadcrumb-item active">{{project_phases.phase.name}} phase</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+    
+    <section class="content">
+      <div class="container-fluid">
+        <section class="section project">
+          <div class="row">
+            <div class="card">
+              <div class="card-body pt-3">
+                <!-- Bordered Tabs -->
+                <ul class="nav nav-tabs nav-tabs-bordered">
+
+                  <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab"
+                      data-bs-target="#profile-overview">Overview</button>
+                  </li>
+
+                  <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#Tasks">Tasks</button>
+                  </li>
+
+                </ul>
+                <div class="tab-content pt-2">
+
+                  <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                    <div class="row row-cards">
+                      <div class="card">
+                        <h1>Project Phases</h1>
+                        <div class="card-body">
+                          <ul class="steps steps-green steps-counter my-4">
+                            {% for tsk in task_info %}
+                            <li class="step-item {% if tsk.is_completed or tsk.is_completed_verified %} active {% endif %} ">{{tsk.name}}</li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade Tasks pt-3" id="Tasks">
+
+                    <!-- Profile Edit Form -->
+                    <div class="row">
+                      <h6 class="card-subtitle mb-2 mt-3">Tasks</h6>
+                      <ul class="list-group">
+
+                        <div class="row">
+                          {% if perms.TaskManagement.add_task %}
+                          <h6 class=" card-subtitle mb-2 mt-3">
+                            <div class="col-auto text-right ml-auto">
+                              <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                data-target="#modal-default_add" href="#edit_personal_details">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                  viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                  stroke-linecap="round" stroke-linejoin="round">
+                                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                  <path d="M12 5l0 14" />
+                                  <path d="M5 12l14 0" />
+                                </svg>
+                                Create new task
+                              </a>
+                            </div>
+                          </h6>
+                          {% endif %}
+                          {% if task_info %}
+                          <div class="row">
+                            <div class="table-responsive">
+                              <table id="example1" class="table table-hover table-center mb-0">
+                                <thead>
+                                  <tr>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    {% if perms.TaskManagement.change_subtasks or perms.TaskManagement.delete_subtasks %}
+                                    <th class="text-right">Action</th>
+                                    {% endif %}
+                                  </tr>
+                                </thead>
+                                {% for tsk in task_info %}
+                                <tr>
+                                  <td>{{tsk.name}}</td>
+                                  <td>{{tsk.is_completed}}</td>
+                                  <td>{{tsk.price}}/=</td>
+
+                                  {% if tsk.status == 'COMPLETED VERIFIED' or tsk.status == 'COMPLETED' %}
+                                  <td><span class=" badge bg-green">{{tsk.status}}</span></td>
+                                  {% elif tsk.status == 'ON GOINING' %}
+                                  <td><span class=" badge bg-red-light">{{tsk.status}}</span></td>
+                                  {% else %}
+                                  <td><span class=" badge bg-danger">{{tsk.status}}</span></td>
+                                  {% endif %}
+                                  {% if perms.TaskManagement.change_task or perms.TaskManagement.delete_task %}
+                                  <td class="text-right">
+                                    <div class="actions">
+                                      {% if tsk.status != 'COMPLETED VERIFIED' %}
+
+                                      {% if perms.TaskManagement.can_verify_task %}
+                                      <a class="btn btn-primary bg-success-light mr-2"
+                                        href="{% url 'taskCompletedVerified' tsk.id %}">
+                                        <i class="fas fa-pen"></i>Verification
+                                      </a>
+                                      {% endif %}
+                                      {% if perms.TaskManagement.change_task %}
+                                      <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                        data-target="#modal-default_{{tsk.id}}" href="#edit_personal_details">
+                                        <i class="fas fa-pen"></i>Edit
+                                      </a>
+                                      </a>
+                                      {% endif %} {% if perms.TaskManagement.delete_task %}
+                                      <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                                        data-target="#modal-default_delete{{tsk.id}}" href="#edit_personal_details">
+                                        <i class="fas fa-trash"></i>Delete
+                                      </a>
+                                      {% endif %}
+                                      {% else %}
+                                      Verified
+                                      {% endif %}
+                                    </div>
+                                  </td> {% endif %}
+
+                                </tr>
+                                <div class="modal fade" id="modal-default_delete{{tsk.id}}">
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h4 class="modal-title">Delete task Information</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <h3>Are you sure you want to delete task of
+                                          <b>{{tsk.name}}</b>
+                                        </h3>
+                                        <a href="{% url 'projectObjectiveDelete' tsk.id %}"
+                                          class="btn btn-primary bg-danger-light text-right">
+                                          Delete
+                                        </a>
+                                      </div>
+
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="modal fade" id="modal-default_{{tsk.id}}">
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h4 class="modal-title">Edit task Information</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <form action="{% url 'taskEdit' tsk.id %}" enctype="multipart/form-data"
+                                          method="POST">
+                                          {% csrf_token %}
+                                          <div class="form-group">
+                                            <label>Name</label>
+                                            <input type="text" name="name" value="{{tsk.name}}" class="form-control">
+                                          </div>
+
+                                          <div class="form-group">
+                                            <label>Task Number</label>
+                                            <input type="text" name="task_number" value="{{tsk.task_number}}"
+                                              class="form-control">
+                                          </div>
+                                          <div class="form-group">
+                                            <label>Priority(0-10)</label>
+                                            <input type="number" name="priority" value="{{tsk.priority}}"
+                                              class="form-control">
+                                          </div>
+                                          <div class="form-group">
+                                            <label>Duration</label>
+                                            <input type="number" name="duration" class="form-control">
+                                          </div>
+
+                                          <div class="form-group">
+                                            <label>Quantity</label>
+                                            <select class="form-select" name="quantity" id="floatingSelect"
+                                              aria-label="Floating label select example">
+                                              <option value="Days">Days</option>
+                                              <option value="Weeks">Weeks</option>
+                                              <option value="Months">Months</option>
+                                              <option value="Years">Years</option>
+                                            </select>
+                                          </div>
+
+                                          <div class="form-group">
+                                            <label>Start Date</label>
+                                            <input type="date" name="start_date" class="form-control">
+                                          </div>
+
+                                          <div class="form-group">
+                                            <label>Price</label>
+                                            <input type="number" name="price" value="{{tsk.price}}" class="form-control">
+                                          </div>
+
+                                          <div class="modal-footer justify-content-between">
+                                            <button type="button" class="btn btn-default"
+                                              data-dismiss="modal">Close</button>
+                                            <input type="submit" class="btn btn-primary" value="Save changes">
+                                          </div>
+                                        </form>
+                                      </div>
+
+                                    </div>
+                                  </div>
+                                </div>
+                                {% endfor %}
+
+                                </tbody>
+
+                              </table>
+                            </div>
+                          </div>
+                          {% endif %}
+
+                        </div>
+                      </ul>
+                    </div>
+
+                    <!-- End Profile Edit Form -->
+
+                  </div>
+
+                </div><!-- End Bordered Tabs -->
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <div class="modal fade" id="modal-default_add">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Add Task Information</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form action="" method="POST">
+              {% csrf_token %}
+
+              <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="name" value="{{tsk.name}}" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Task Number</label>
+                <input type="text" name="task_number" value="{{tsk.task_number}}" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Priority(0-10)</label>
+                <input type="number" name="priority" value="{{tsk.priority}}" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Duration</label>
+                <input type="number" name="duration" class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label>Quantity</label>
+                <select class="form-select" name="quantity" id="floatingSelect"
+                  aria-label="Floating label select example">
+                  <option value="Days">Days</option>
+                  <option value="Weeks">Weeks</option>
+                  <option value="Months">Months</option>
+                  <option value="Years">Years</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Start Date</label>
+                <input type="date" name="start_date" class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label>Price</label>
+                <input type="number" name="price" value="{{tsk.price}}" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Teams</label>
+
+                {% for team in teams %}                
+                <label class="form-check">
+                <input type="checkbox" name="{{team.id}}" class="form-check-input"/>
+                <span class="form-check-label">{{team.name}}</span>
+              </label>
+                {% endfor %}
+              </div>
+
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-primary" value="Save changes">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="modal-default_add_deliverable">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Add Deliverable Information</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form action="" method="POST">
+              {% csrf_token %}
+
+              <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="name" value="{{tsk.name}}" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Task Number</label>
+                <input type="text" name="task_number" value="{{tsk.task_number}}" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Priority(0-10)</label>
+                <input type="number" name="priority" value="{{tsk.priority}}" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Duration</label>
+                <input type="number" name="duration" class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label>Quantity</label>
+                <select class="form-select" name="quantity" id="floatingSelect"
+                  aria-label="Floating label select example">
+                  <option value="Days">Days</option>
+                  <option value="Weeks">Weeks</option>
+                  <option value="Months">Months</option>
+                  <option value="Years">Years</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Start Date</label>
+                <input type="date" name="start_date" class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label>Price</label>
+                <input type="number" name="price" value="{{tsk.price}}" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Teams</label>
+
+                {% for team in teams %}                
+                <label class="form-check">
+                <input type="checkbox" name="{{team.id}}" class="form-check-input"/>
+                <span class="form-check-label">{{team.name}}</span>
+              </label>
+                {% endfor %}
+                              </div>
+
+              <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-primary" value="Save changes">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+{% include "includes/footer.html" %}

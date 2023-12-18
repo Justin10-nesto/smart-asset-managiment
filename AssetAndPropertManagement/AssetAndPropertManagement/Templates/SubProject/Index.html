@@ -1,0 +1,182 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/subTask Sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+    <div class="content container-fluid">
+      <section class="content-header">
+      <div class="page-header d-print-none">
+      <div class="container-xl">
+        <div class="row g-2 align-items-center">
+          <div class="col">
+            <h2 class="page-title">
+              Project DashBoard
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Page body -->
+    <div class="page-body">
+      <div class="container-xl">
+        
+    <!-- Default box -->
+    <div class="card">
+      <div class="card-body">
+        
+        <div class="row">
+          <div class="col-12 col-md-12 col-lg-12 order-2 order-md-1">
+            <div class="row">
+              <H1 class=" align-center text-center text-uppercase">{{project_info.name | upper}} Phases Report</H1>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Phases Completed</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.phases_status.COMPLETED}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Phases Completed Verified </span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.phases_status.Verified}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Continuinig Phases</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.phases_status.GOINING}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Phases Not Yet Started </span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.phases_status.Initial}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Total Task</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.task_status.Total}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">completed Verified Tasks</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.task_status.Verified}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">completed Unverified Tasks</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.task_status.COMPLETED}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Resource Requested</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.no_projectEquiments.Requested}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Resource Given</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.no_projectEquiments.Given}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-4">
+                <div class="info-box bg-light">
+                  <div class="info-box-content">
+                    <span class="info-box-text text-center text-muted">Resource Returned</span>
+                    <span class="info-box-number text-center text-muted mb-0">{{project_info.no_projectEquiments.Returned}}</span>
+                  </div>
+                </div>
+              </div>
+              </div>
+          </div>
+      </div>
+      <!-- /.card-body -->
+    </div>
+  </div>
+  {% if project_info.number_delivarables %}
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table table-vcenter table-nowrap card-table">
+              <tbody>
+                <tr class="bg-light">
+                  <th colspan="4" class="subheader">Documents</th>
+                </tr>
+                <tr>
+                  <td>
+                  </td>
+                  <td>
+                    <div class="text-capitalize text-muted font-weight-medium">Not Yet Done</div>
+                  </td>
+                  <td>
+                    <div class="text-capitalize text-muted font-weight-medium">In Progress</div>
+                  </td>
+                  <td class="text-center"><!-- Download SVG icon from http://tabler-icons.io/i/x -->
+                    <div class="text-capitalize text-muted font-weight-medium">Completed</div>
+                  </td>
+                  <td class="text-center"><!-- Download SVG icon from http://tabler-icons.io/i/x -->
+                    <div class="text-capitalize text-muted font-weight-medium">Completed Verified</div>
+                  </td>
+                </tr>
+                {% for deliverable in project_info.number_delivarables %}
+                <tr>
+                  <td>{{deliverable.delivarable.name}}</td>
+                  <td class="text-center"><!-- Download SVG icon from http://tabler-icons.io/i/x -->
+                    {% if deliverable.status.NotYet %}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                    {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon text-red" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
+                    {% endif %}
+                  </td>
+                  <td class="text-center"><!-- Download SVG icon from http://tabler-icons.io/i/x -->
+                    {% if deliverable.status.GOINING %}
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                  {% else %}
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon text-red" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
+                  {% endif %}
+                </td>
+                <td class="text-center"><!-- Download SVG icon from http://tabler-icons.io/i/check -->
+                  {% if deliverable.status.COMPLETED %}
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                  {% else %}
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon text-red" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
+                  {% endif %}
+                </td>
+                <td class="text-center"><!-- Download SVG icon from http://tabler-icons.io/i/check -->
+                  {% if deliverable.status.Verified %}
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                  {% else %}
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon text-red" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg>
+                  {% endif %}
+                </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </section>
+</div>
+{% include "includes/footer.html" %}

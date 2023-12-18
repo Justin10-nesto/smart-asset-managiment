@@ -1,0 +1,87 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/sidebar.html" %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Full User Details</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">Full User Details</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+   <div class="card mb-3">
+
+                                <div class="card-body">
+
+                                    
+                                    <form method="POST" class="row g-3 needs-validation">
+                                        {% csrf_token %}
+                                        <div class="col-12">
+                                            <label for="yourName" class="form-label">First Name</label>
+                                            <input type="text" name="first_name" value="{{request.user.first_name}}" class="form-control" required>
+                                            <div class="invalid-feedback">Please, enter your First name!</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="yourName" class="form-label">middle Name</label>
+                                            <input type="text" name="middle_name" class="form-control" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="yourName" class="form-label">Last Name</label>
+                                            <input type="text" name="last_name" value="{{request.user.last_name}}" class="form-control" required>
+                                            <div class="invalid-feedback">Please, enter your Last name!</div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="yourphone number" class="form-label">Your phone number</label>
+                                            <input type="tel" name="phone_number" class="form-control"
+                                                id="yourphonenumber" required>
+                                            <div class="invalid-feedback">Please enter a valid phone number adddress!
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="yourphone number" class="form-label">Country</label>
+                                            <input type="tel" name="country" class="form-control" id="Country" required>
+                                            <div class="invalid-feedback">Please selext your Country</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Date of Birth</label>
+                                            <input type="date" name="bod" class="form-control" id="DateofBirth"
+                                                required>
+                                            <div class="invalid-feedback">Please selext your date of Birth</div>
+                                        </div>
+
+                                    
+                                        <label for="floatingSelect">Gender</label>
+
+                                        <select class="form-select" name="gender" id="floatingSelect"
+                                            aria-label="Floating label select example">
+                                            <option value="Male" selected>Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+        <div class="col-12">
+                                            <button class="btn btn-primary w-100" type="submit">Save Changes</button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </div>
+</div>
+{% include "includes/footer.html" %}
