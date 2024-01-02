@@ -1,189 +1,176 @@
-{% load static %} {% include "includes/header.html" %} {% include "includes/sidebar.html" %}
-
-<div class="content-wrapper bg-white">
-    <div class="Asset container-fluid">
-        <section class="content-header">
-    <div class="page-header d-print-none">
-      <div class="container-xl">
-        <div class="row align-items-center">
-            <div class="col">
-                <h3 class="page-title">asset role</h3>
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'DashboardPage' %}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">asset role List</li>
-                </ul>
-            </div>
-            {% if perms.AssetManagement.add_assetrole %}
-            <div class="col-auto text-right float-right ml-auto">
-                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal" data-target="#modal-default_add"
-                    href="#edit_personal_details">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M12 5l0 14" />
-                        <path d="M5 12l14 0" />
-                    </svg>
-                    Create new asset role
-                </a>
-            </div>
-            {% endif %}
-        </div>
-      </div>
-    </div></section>
-    </div>
-    
-    <div class="modal fade" id="modal-default_add">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Add asset role Information</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label>name</label>
-                            <input type="text" name="name" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Category</label>
-                     
-                            <select class="form-select" name="asset" id="floatingSelect" aria-label="Floating label select example">
-                                {% for asset in assets %}
-                                  <option value="{{asset.id}}">{{asset.name}}</option>
-                                  {% endfor %}
-                              </select>
-                            </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <input type="submit" class="btn btn-primary" value="Save changes">
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <section class="content">
-        <div class="container-fluid">
-{% if asset_info %}
-    <div class="row">
-        <div class="col-12">
-    <div class="card">
-        <div class="card-body">
-          <table id="example1" class="table table table-hover table-center mb-0">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>asset</th>
-                    <th>Created by</th>
-                    <th>Updated by</th>
-                   {% if perms.AssetManagement.change_assetrole or perms.AssetManagement.delete_assetrole %}
-                    <th class="text-right">Action</th>
+{% load static %} {% include "AssetManagement/asset.html" %}
+    <div class="col-md-10">
+        <div class="card">
+            <div class="page-header d-print-none">
+                <div class="container-xl m-2">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">{{asset.name}} role</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'DashboardPage' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">{{asset.name}} role List</li>
+                        </ul>
+                    </div>
+                    {% if perms.AssetManagement.add_assetrole %}
+                    <div class="col-auto text-right float-right ml-auto">
+                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                            data-target="#modal-default_add" href="#edit_personal_roles">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M12 5l0 14" />
+                                <path d="M5 12l14 0" />
+                            </svg>
+                            Create new {{asset.name}} role
+                        </a>
+                    </div>
                     {% endif %}
-                </tr>
-            </thead>
-            <tbody>
-            {% for asset in asset_info %}
-            <tr>
-                <td>{{asset.name}}</td>
-]                <td>{{asset.asset.name}}</td>
-                <td>{{asset.created_by.full_name}}</td>
-                <td>{{asset.update_by.full_name}}</td>
-                {% if perms.AssetManagement.change_assetrole or perms.AssetManagement.delete_assetrole %}
-                <td class="text-right">
-                    <div class="actions">
-                        {% if perms.AssetManagement.change_assetrole %}
-                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
-                            data-target="#modal-default_{{asset.id}}" href="#edit_personal_details">
-                            <i class="fas fa-pen"></i>Edit
-                            </a>
-                        </a>
-                        {% endif %} {% if perms.AssetManagement.delete_assetrole %}
-                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
-                            data-target="#modal-default_delete{{asset.id}}" href="#edit_personal_details">
-                            <i class="fas fa-trash"></i>Delete
-                        </a>
+                </div>
+                <div class="modal fade" id="modal-default_add">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Add {{asset.name}} role Information</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label>{{Asset.name}} roles</label>
+                                        <input type="text" name="name" class="form-control">
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default"
+                                            data-dismiss="modal">Close</button>
+                                        <input type="submit" class="btn btn-primary" value="Save changes">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <section class="content">
+                    <div class="container-fluid">
+                        {% if asset_info %}
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <table id="example1" class="table table table-hover table-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>roles</th>
+                                                    <th>asset</th>
+                                                    <th>Updated by</th>
+                                                    {% if perms.AssetManagement.change_assetrole or perms.AssetManagement.delete_assetrole %}
+                                                    <th class="text-right">Action</th>
+                                                    {% endif %}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for role in asset_info %}
+                                                <tr>
+                                                    <td>{{role.name}}</td>
+                                                    <td>{{role.asset.name}}</td>
+                                                    <td>{{role.update_by.full_name}}</td>
+                                                    {% if perms.AssetManagement.change_assetrole or perms.AssetManagement.delete_assetrole %}
+                                                    <td class="text-right">
+                                                        <div class="actions">
+                                                            {% if perms.AssetManagement.change_assetrole %}
+                                                            <a class="btn btn-primary bg-success-light mr-2"
+                                                                data-toggle="modal"
+                                                                data-target="#modal-default_{{role.id}}"
+                                                                href="#edit_personal_roles">
+                                                                <i class="fas fa-pen"></i>Edit
+                                                            </a>
+                                                            </a>
+                                                            {% endif %} {% if perms.AssetManagement.delete_assetrole %}
+                                                            <a class="btn btn-primary bg-success-light mr-2"
+                                                                data-toggle="modal"
+                                                                data-target="#modal-default_delete{{role.id}}"
+                                                                href="#edit_personal_roles">
+                                                                <i class="fas fa-trash"></i>Delete
+                                                            </a>
+                                                            {% endif %}
+                                                        </div>
+                                                    </td> {% endif %}
+
+                                                </tr>
+
+                                                <div class="modal fade" id="modal-default_delete{{role.id}}">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title">Delete {{role.name}} role Information
+                                                                </h4>
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <h3>Are you sure you want to delete {{Asset.name}} role of
+                                                                    <b>{{role.name}}</b>
+                                                                </h3>
+                                                                <a href="{% url 'assetRoleDelete' role.id %}"
+                                                                    class="btn btn-primary bg-danger-light text-right">
+                                                                    Delete
+                                                                </a>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal fade" id="modal-default_{{role.id}}">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title">Edit {{Asset.name}} role Information
+                                                                </h4>
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <form action="{% url 'assetRoleEdit' role.id %}"
+                                                                    enctype="multipart/form-data" method="POST">
+                                                                    {% csrf_token %}
+                                                                    <div class="form-group">
+                                                                        <label>{{asset.name}} role</label>
+                                                                        <input type="text" name="name"
+                                                                            value="{{role.name}}" class="form-control">
+                                                                    </div>
+                                                                    <div class="modal-footer justify-content-between">
+                                                                        <button type="button" class="btn btn-default"
+                                                                            data-dismiss="modal">Close</button>
+                                                                        <input type="submit" class="btn btn-primary"
+                                                                            value="Save changes">
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
                         {% endif %}
                     </div>
-                </td> {% endif %}
-
-            </tr>
-        
-            <div class="modal fade" id="modal-default_delete{{asset.id}}">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Delete asset role Information</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <h3>Are you sure you want to delete Asset role  of
-                                <b>{{asset.name}}</b>
-                            </h3>
-                            <a href="{% url 'assetRoleDelete' asset.id %}"
-                                class="btn btn-primary bg-danger-light text-right">
-                                Delete
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
+                </section>
             </div>
-            <div class="modal fade" id="modal-default_{{asset.id}}">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Edit Asset role Information</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="{% url 'assetRoleEdit' asset.id %}" enctype="multipart/form-data" method="POST">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <label>name</label>
-                                    <input type="text" name="name" value="{{asset.name}}" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label>asset</label>
-                             
-                                    <select class="form-select" name="asset" id="floatingSelect" aria-label="Floating label select example">
-                                        <option value="{{asset.asset.id}}">{{asset.asset.name}}</option>
-                                        {% for category in assets %}
-                                          <option value="{{category.id}}">{{category.name}}</option>
-                                          {% endfor %}
-                                      </select>
-                                    </div>
-                               
-                                <div class="modal-footer justify-content-between">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <input type="submit" class="btn btn-primary" value="Save changes">
-                                </div>
-                            </form>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-            </tbody>
-
-          </table>
         </div>
-        <!-- /.card-body -->
-      </div>
-    </div>
-</div>
-{% endif %}
-        </div></section>
-</div>
 
-{% include "includes/footer.html" %}
+        {% include "includes/footer.html" %}

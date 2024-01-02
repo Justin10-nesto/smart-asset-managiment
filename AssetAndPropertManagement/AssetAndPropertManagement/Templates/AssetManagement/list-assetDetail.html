@@ -1,287 +1,308 @@
-{% load static %} {% include "includes/header.html" %} {% include "includes/sidebar.html" %}
-
-<div class="content-wrapper bg-white">
-    <div class="Asset container-fluid">
-        <section class="content-header">
-    <div class="page-header d-print-none">
-      <div class="container-xl">
-        <div class="row align-items-center">
-            <div class="col">
-                <h3 class="page-title">asset Detail</h3>
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'DashboardPage' %}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">asset Detail List</li>
-                </ul>
-            </div>
-            {% if perms.AssetManagement.add_assetDetail %}
-            <div class="col-auto text-right float-right ml-auto">
-                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal" data-target="#modal-default_add"
-                    href="#edit_personal_details">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M12 5l0 14" />
-                        <path d="M5 12l14 0" />
-                    </svg>
-                    Create new asset Detail
-                </a>
-            </div>
-            {% endif %}
-        </div>
-      </div>
-    </div></section>
-    </div>
-    
-    <div class="modal fade" id="modal-default_add">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Add asset Detail Information</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label>Asset Owner</label>
-                            <input type="text" name="owner" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Asset location</label>
-                            <input type="text" name="location" id="location" readonly class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Asset description</label>
-                            <input type="text" name="description" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Asset Availables</label>
-                            <input type="text" name="number_asset_present" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Asset type</label>
-                            <select class="form-select" name="type" id="floatingSelect" aria-label="Floating label select example">
-                                {% for type in types %}
-                                  <option value="{{type.id}}">{{type.name}}</option>
-                                  {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Asset ownership</label>
-                            <select class="form-select" name="ownership" id="floatingSelect" aria-label="Floating label select example">
-                                {% for ownership in ownerships %}
-                                  <option value="{{ownership.id}}">{{ownership.name}}</option>
-                                  {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Asset status</label>
-                            <select class="form-select" name="asset_status" id="floatingSelect" aria-label="Floating label select example">
-                                {% for status in asset_status %}
-                                  <option value="{{status.id}}">{{status.name}}</option>
-                                  {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Asset Uses</label>
-                            <select class="form-select" name="assets_use" id="floatingSelect" aria-label="Floating label select example">
-                                {% for assets_use in assets_uses %}
-                                  <option value="{{assets_use.id}}">{{assets_use.name}}</option>
-                                  {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Asset payent Status</label>
-                            <select class="form-select" name="payment_status" id="floatingSelect" aria-label="Floating label select example">
-                                {% for py_status in payment_status %}
-                                  <option value="{{py_status.id}}">{{py_status.name}}</option>
-                                  {% endfor %}
-                            </select>
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <input type="submit" class="btn btn-primary" value="Save changes">
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <section class="content">
-        <div class="container-fluid">
-{% if assets_details %}
-    <div class="row">
-        <div class="col-12">
-    <div class="card">
-        <div class="card-body">
-          <table id="example1" class="table table table-hover table-center mb-0">
-            <thead>
-                <tr>
-                    <th>owner</th>
-                    <th>asset</th>
-                    <th>Uses</th>
-                    <th>Status</th>
-                    <th>payment</th>
-                    <th>Created by</th>
-                    <th>Updated by</th>
-                   {% if perms.AssetManagement.change_assetDetail or perms.AssetManagement.delete_assetDetail %}
-                    <th class="text-right">Action</th>
+{% load static %} {% include "AssetManagement/asset.html" %}
+    <div class="col-md-10">
+        <div class="card">
+            <div class="page-header d-print-none">
+                <div class="container-xl m-2">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="page-title">asset Detail</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'DashboardPage' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">asset Detail List</li>
+                        </ul>
+                    </div>
+                    {% if perms.AssetManagement.add_assetDetail %}
+                    <div class="col-auto text-right float-right ml-auto">
+                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                            data-target="#modal-default_add" href="#edit_personal_details">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M12 5l0 14" />
+                                <path d="M5 12l14 0" />
+                            </svg>
+                            Create new asset Detail
+                        </a>
+                    </div>
                     {% endif %}
-                </tr>
-            </thead>
-            <tbody>
-            {% for asset in assets_details %}
-            <tr>
-                <td><a href="">{{asset.owner}}</a></td>
-                <td>{{asset.asset.name}}</td>
-                <td>{{asset.asset_use.name}}</td>
-                <td>{{asset.asset_status.name}}</td>
-                <td>{{asset.paynent.name}}</td>
-                <td>{{asset.created_by.full_name}}</td>
-                <td>{{asset.update_by.full_name}}</td>
-                {% if perms.AssetManagement.change_assetDetail or perms.AssetManagement.delete_assetDetail %}
-                <td class="text-right">
-                    <div class="actions">
-                        {% if perms.AssetManagement.change_assetDetail %}
-                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
-                            data-target="#modal-default_{{asset.id}}" href="#edit_personal_details">
-                            <i class="fas fa-pen"></i>Edit
-                            </a>
-                        </a>
-                        {% endif %} {% if perms.AssetManagement.delete_assetDetail %}
-                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
-                            data-target="#modal-default_delete{{asset.id}}" href="#edit_personal_details">
-                            <i class="fas fa-trash"></i>Delete
-                        </a>
+                </div>
+                <div class="modal fade" id="modal-default_add">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Add asset Detail Information</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label>Asset Owner</label>
+                                        <input type="text" name="owner" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Asset location</label>
+                                        <input type="text" name="location" id="location" readonly class="form-control">
+                                    </div>
+                                    {% if assets_descriptiontypes %}
+                                    {% for description in assets_descriptiontypes %}
+                                    <div class="form-group">
+                                        <label>{{description.name}}</label>
+                                        <input type="{{description.type}}" name="{{description.id}}" {% if description.is_required %} required {% endif %}
+                                            class="form-control">
+                                    </div>
+                                    {% endfor %}
+                                    {% endif %}
+                                    <div class="form-group">
+                                        <label>Asset Availables</label>
+                                        <input type="text" name="number_asset_present" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Asset type</label>
+                                        <select class="form-select" name="type" id="floatingSelect"
+                                            aria-label="Floating label select example">
+                                            {% for type in types %}
+                                            <option value="{{type.id}}">{{type.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Asset ownership</label>
+                                        <select class="form-select" name="ownership" id="floatingSelect"
+                                            aria-label="Floating label select example">
+                                            {% for ownership in ownerships %}
+                                            <option value="{{ownership.id}}">{{ownership.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Asset status</label>
+                                        <select class="form-select" name="asset_status" id="floatingSelect"
+                                            aria-label="Floating label select example">
+                                            {% for status in asset_status %}
+                                            <option value="{{status.id}}">{{status.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Asset Uses</label>
+                                        <select class="form-select" name="assets_use" id="floatingSelect"
+                                            aria-label="Floating label select example">
+                                            {% for assets_use in assets_uses %}
+                                            <option value="{{assets_use.id}}">{{assets_use.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Asset payent Status</label>
+                                        <select class="form-select" name="payment_status" id="floatingSelect"
+                                            aria-label="Floating label select example">
+                                            {% for py_status in payment_status %}
+                                            <option value="{{py_status.id}}">{{py_status.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default"
+                                            data-dismiss="modal">Close</button>
+                                        <input type="submit" class="btn btn-primary" value="Save changes">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <section class="content">
+                    <div class="container-fluid">
+                        {% if assets_details %}
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <table id="example1" class="table table table-hover table-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>owner</th>
+                                                    <th>asset</th>
+                                                    <th>Uses</th>
+                                                    <th>Status</th>
+                                                    <th>payment</th>
+                                                    <th>Updated by</th>
+                                                    {% if perms.AssetManagement.change_assetDetail or perms.AssetManagement.delete_assetDetail %}
+                                                    <th class="text-right">Action</th>
+                                                    {% endif %}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for detail in assets_details %}
+                                                <tr>
+                                                    <td><a href="{% url 'assetFullDetails' detail.id %}">{{detail.owner}}</a></td>
+                                                    <td>{{detail.asset.name}}</td>
+                                                    <td>{{detail.asset_use.name}}</td>
+                                                    <td>{{detail.asset_status.name}}</td>
+                                                    <td>{{detail.paynent.name}}</td>
+                                                    <td>{{detail.update_by.full_name}}</td>
+                                                    {% if perms.AssetManagement.change_assetDetail or perms.AssetManagement.delete_assetDetail %}
+                                                    <td class="text-right">
+                                                        <div class="actions">
+                                                            {% if perms.AssetManagement.change_assetDetail %}
+                                                            <a class="btn btn-primary bg-success-light mr-2"
+                                                                data-toggle="modal"
+                                                                data-target="#modal-default_{{detail.id}}"
+                                                                href="#edit_personal_details">
+                                                                <i class="fas fa-pen"></i>Edit
+                                                            </a>
+                                                            </a>
+                                                            {% endif %} {% if perms.AssetManagement.delete_assetDetail %}
+                                                            <a class="btn btn-primary bg-success-light mr-2"
+                                                                data-toggle="modal"
+                                                                data-target="#modal-default_delete{{detail.id}}"
+                                                                href="#edit_personal_details">
+                                                                <i class="fas fa-trash"></i>Delete
+                                                            </a>
+                                                            {% endif %}
+                                                        </div>
+                                                    </td> {% endif %}
+
+                                                </tr>
+
+                                                <div class="modal fade" id="modal-default_delete{{detail.id}}">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title">Delete asset Detail Information
+                                                                </h4>
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <h3>Are you sure you want to delete Asset Detail of
+                                                                    <b>{{detail.name}}</b>
+                                                                </h3>
+                                                                <a href="{% url 'assetDetailDelete' detail.id %}"
+                                                                    class="btn btn-primary bg-danger-light text-right">
+                                                                    Delete
+                                                                </a>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal fade" id="modal-default_{{detail.id}}">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title">Edit Asset Detail Information
+                                                                </h4>
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <form action="{% url 'assetDetailEdit' detail.id %}"
+                                                                    enctype="multipart/form-data" method="POST">
+                                                                    {% csrf_token %}
+                                                                    <div class="form-group">
+                                                                        <label>name</label>
+                                                                        <input type="text" name="name"
+                                                                            value="{{detail.owner}}" class="form-control">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>asset</label>
+
+                                                                        <select class="form-select" name="asset"
+                                                                            id="floatingSelect"
+                                                                            aria-label="Floating label select example">
+                                                                            <option value="{{asset.detail.id}}">
+                                                                                {{asset.asset.name}}</option>
+                                                                            {% for category in assets %}
+                                                                            <option value="{{category.id}}">
+                                                                                {{category.name}}</option>
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="modal-footer justify-content-between">
+                                                                        <button type="button" class="btn btn-default"
+                                                                            data-dismiss="modal">Close</button>
+                                                                        <input type="submit" class="btn btn-primary"
+                                                                            value="Save changes">
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                            </div>
+                        </div>
                         {% endif %}
                     </div>
-                </td> {% endif %}
-
-            </tr>
-        
-            <div class="modal fade" id="modal-default_delete{{asset.id}}">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Delete asset Detail Information</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <h3>Are you sure you want to delete Asset Detail  of
-                                <b>{{asset.name}}</b>
-                            </h3>
-                            <a href="{% url 'assetDetailDelete' asset.id %}"
-                                class="btn btn-primary bg-danger-light text-right">
-                                Delete
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
+                </section>
             </div>
-            <div class="modal fade" id="modal-default_{{asset.id}}">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Edit Asset Detail Information</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="{% url 'assetDetailEdit' asset.id %}" enctype="multipart/form-data" method="POST">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <label>name</label>
-                                    <input type="text" name="name" value="{{asset.name}}" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label>asset</label>
-                             
-                                    <select class="form-select" name="asset" id="floatingSelect" aria-label="Floating label select example">
-                                        <option value="{{asset.asset.id}}">{{asset.asset.name}}</option>
-                                        {% for category in assets %}
-                                          <option value="{{category.id}}">{{category.name}}</option>
-                                          {% endfor %}
-                                      </select>
-                                    </div>
-                               
-                                <div class="modal-footer justify-content-between">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <input type="submit" class="btn btn-primary" value="Save changes">
-                                </div>
-                            </form>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-            </tbody>
-
-          </table>
         </div>
-        <!-- /.card-body -->
-      </div>
-    </div>
-</div>
-{% endif %}
-        </div></section>
-</div>
 
-<script>
-    let locationField = document.getElementById('location');
-    const options = {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0,
-      };
-      
-      function success(pos) {
-        const crd = pos.coords;
-        let latitude = crd.latitude;
-        let longitude = crd.longitude;
-        let accuracy = crd.accuracy;
-        locationField.value = latitude + ', ' + longitude;
-        }
-      
-      function error(err) {
-        console.warn(`ERROR(${err.code}): ${err.message}`);
-      }
-      
-      navigator.geolocation.getCurrentPosition(success, error, options);
+        <script>
+            let locationField = document.getElementById('location');
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0,
+            };
 
-      var geocoder;
-        geocoder = new google.maps.Geocoder();
-        var latlng = new google.maps.LatLng(latitude, longitude);
-        geocoder.geocode(
-            {'latLng': latlng}, 
-            function(results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
+            function success(pos) {
+                const crd = pos.coords;
+                let latitude = crd.latitude;
+                let longitude = crd.longitude;
+                let accuracy = crd.accuracy;
+                locationField.value = latitude + ', ' + longitude;
+            }
+
+            function error(err) {
+                console.warn(`ERROR(${err.code}): ${err.message}`);
+            }
+
+            navigator.geolocation.getCurrentPosition(success, error, options);
+
+            var geocoder;
+            geocoder = new google.maps.Geocoder();
+            var latlng = new google.maps.LatLng(latitude, longitude);
+            geocoder.geocode(
+                { 'latLng': latlng },
+                function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
                         if (results[0]) {
-                            var add= results[0].formatted_address ;
-                            var  value=add.split(",");
-                            count=value.length;
-                            country=value[count-1];
-                            state=value[count-2];
-                            city=value[count-3];
-                    alert("city name is: " + city);
+                            var add = results[0].formatted_address;
+                            var value = add.split(",");
+                            count = value.length;
+                            country = value[count - 1];
+                            state = value[count - 2];
+                            city = value[count - 3];
+                            alert("city name is: " + city);
+                        }
+                        else {
+                            alert("address not found");
+                        }
+                    }
+                    else {
+                        alert("Geocoder failed due to: " + status);
+                    }
                 }
-                else  {
-                    alert("address not found");
-                }
-        }
-         else {
-            alert("Geocoder failed due to: " + status);
-        }
-    }
-);
-</script>
+            );
+        </script>
 
-{% include "includes/footer.html" %}
+        {% include "includes/footer.html" %}

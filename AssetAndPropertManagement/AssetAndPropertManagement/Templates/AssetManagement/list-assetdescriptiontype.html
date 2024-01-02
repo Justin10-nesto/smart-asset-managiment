@@ -1,0 +1,192 @@
+{% load static %} {% include "AssetManagement/asset.html" %}          
+          <div class="col-md-10">
+            <div class="card">
+    <div class="page-header d-print-none">
+        <div class="container-xl m-2">
+            <div class="row align-items-center">
+            <div class="col">
+                <h3 class="page-title"> {{asset.name}} description type</h3>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'DashboardPage' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active"> {{asset.name}} description type List</li>
+                </ul>
+            </div>
+            {% if perms.AssetManagement.add_assetdescriptiontype %}
+            <div class="col-auto text-right float-right ml-auto">
+                <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal" data-target="#modal-default_add"
+                    href="#edit_personal_descriptiontypes">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 5l0 14" />
+                        <path d="M5 12l14 0" />
+                    </svg>
+                    Create new {{asset.name}} descriptiont ype
+                </a>
+            </div>
+            {% endif %}
+        </div>
+      <div class="modal fade" id="modal-default_add">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add  {{asset.name}} description type Information</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>name</label>
+                            <input type="text" name="name" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>type</label>
+                            <select class="form-select" name="type" id="floatingSelect" aria-label="Floating label select example">
+                                <option value="text">text</option>
+                                <option value="Number">Number</option>
+                                <option value="date">date</option>
+                                <option value="file">file</option>
+                            </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Is Required</label>
+                                <select class="form-select" name="is_required" id="floatingSelect" aria-label="Floating label select example">
+                                    <option value="1">Yes</option>
+                                    <option value="0"> No</option>
+                                </select>
+                               </div>
+    
+                            
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Save changes">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <section class="content">
+        <div class="container-fluid">
+{% if assets_descriptiontypes %}
+    <div class="row">
+        <div class="col-12">
+    <div class="card">
+        <div class="card-body">
+          <table id="example1" class="table table table-hover table-center mb-0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>type</th>
+                    <th>is Required</th>
+                    <th>Created by</th>
+                    <th>Updated by</th>
+                   {% if perms.AssetManagement.change_assetdescriptiontype or perms.AssetManagement.delete_assetdescriptiontype %}
+                    <th class="text-right">Action</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for  description in assets_descriptiontypes %}
+            <tr>
+                <td>{{description.name}}</td>
+                <td>{{description.type}}</td>
+                <td>{{description.is_required}}</td>
+                <td>{{description.update_by.full_name}}</td>
+                <td>{{description.update_by.full_name}}</td>
+                {% if perms.AssetManagement.change_assetdescriptiontype or perms.AssetManagement.delete_assetdescriptiontype %}
+                <td class="text-right">
+                    <div class="actions">
+                        {% if perms.AssetManagement.change_assetdescriptiontype %}
+                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                            data-target="#modal-default_{{description.id}}" href="#edit_personal_descriptiontypes">
+                            <i class="fas fa-pen"></i>Edit
+                            </a>
+                        </a>
+                        {% endif %} {% if perms.AssetManagement.delete_assetdescriptiontype %}
+                        <a class="btn btn-primary bg-success-light mr-2" data-toggle="modal"
+                            data-target="#modal-default_delete{{description.id}}" href="#edit_personal_descriptiontypes">
+                            <i class="fas fa-trash"></i>Delete
+                        </a>
+                        {% endif %}
+                    </div>
+                </td> {% endif %}
+
+            </tr>
+        
+            <div class="modal fade" id="modal-default_delete{{description.id}}">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Delete  {{asset.name}} descriptiontype Information</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <h3>Are you sure you want to delete  {{asset.name}} descriptiontype  of
+                                <b>{{asset.name}}</b>
+                            </h3>
+                            <a href="{% url 'assetDescriptionTypeDelete' description.id %}"
+                                class="btn btn-primary bg-danger-light text-right">
+                                Delete
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="modal-default_{{description.id}}">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Edit  {{asset.name}} descriptiontype Information</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{% url 'assetDescriptionTypeEdit' description.id %}" enctype="multipart/form-data" method="POST">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label>name</label>
+                                    <input type="text" name="name" value="{{description.name}}" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>type</label>
+                                    <select class="form-select" name="type" id="floatingSelect" aria-label="Floating label select example">
+                                        <option value="{{description.type}}">{{description.type}}</option>
+                                        <option value="text">text</option>
+                                        <option value="Number">Number</option>
+                                        <option value="file">file</option>
+                                    </div>
+
+                                    <div class="modal-footer justify-content-between">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <input type="submit" class="btn btn-primary" value="Save changes">
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+        <!-- /.card-body -->
+      </div>
+    </div>
+</div>
+{% endif %}
+        </div></section>
+</div>
+
+{% include "includes/footer.html" %}

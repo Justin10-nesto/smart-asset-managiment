@@ -1,3 +1,4 @@
+import json
 from django.db import models
 from datetime import timedelta
 from django.contrib.auth.models import *
@@ -116,6 +117,18 @@ class Asset(models.Model):
 
     def __str__(self):
         return self.name
+    
+class AssetDescriptionType(models.Model):
+    name = models.CharField(max_length=100)
+    type = models.TextField()
+    asset = models.ForeignKey(Asset, on_delete= models.CASCADE)
+    created_by = models.ForeignKey(UserDetails, related_name='created_asset_description_type', on_delete=models.CASCADE)
+    update_by = models.ForeignKey(UserDetails, related_name='updated_asset_description_type', on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
         
 class AssetUse(models.Model):
     name = models.CharField(max_length=100)
@@ -189,7 +202,7 @@ class AssetRole(models.Model):
 class AssetDetail(models.Model):
     owner = models.CharField(max_length=100)
     location = models.TextField()
-    asset_description = models.TextField()
+    asset_description = models.JSONField(default = dict())
     number_asset_present = models.BigIntegerField(default=1)
     ward = models.ForeignKey(Ward, on_delete= models.CASCADE, null= True)
     type = models.ForeignKey(AssetType, on_delete= models.CASCADE)
@@ -204,7 +217,7 @@ class AssetDetail(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.owner
     
     @property
     def assetusers(self):
@@ -212,14 +225,46 @@ class AssetDetail(models.Model):
         users = AssetUser.objects.filter(asset = asset)
         return users
     
+    def loaded_discription(self):
+        return json.loads(self.asset_description)
     
     class Meta:
         verbose_name = "Asset Detail"
         db_table = "Asset Detail"
- 
+
+class AssetDescriptionType(models.Model):
+    name = models.CharField(max_length=100)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Asset Description Type"
+        db_table = "Asset User Description Type"
+
+class AssetUserDescription(models.Model):
+    name = models.CharField(max_length=100)
+    type = models.TextField()
+    is_required = models.BooleanField(default= True)
+    description_type = models.ForeignKey(AssetDescriptionType, null = True, on_delete= models.CASCADE)
+    asset = models.ForeignKey(Asset, on_delete= models.CASCADE)
+    created_by = models.ForeignKey(UserDetails, related_name='created_asset_user_description_type', on_delete=models.CASCADE)
+    update_by = models.ForeignKey(UserDetails, related_name='updated_asset_user_description_type', on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Asset User Description"
+        db_table = "Asset User Description"
+
 class AssetUser(models.Model):
     full_name = models.CharField(max_length=100)
-    phone_number = models.BigIntegerField()
+    description = models.JSONField()
     role = models.ForeignKey(AssetRole, on_delete= models.CASCADE)
     asset = models.ForeignKey(AssetDetail, on_delete= models.CASCADE)
     created_by = models.ForeignKey(UserDetails, related_name='created_asuser', on_delete=models.CASCADE)
@@ -228,7 +273,11 @@ class AssetUser(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.full_name
+    
+    def loaded_description(self):
+        user_data =  json.loads(self.description)
+        return user_data
     
     class Meta:
         verbose_name = "Asset User"

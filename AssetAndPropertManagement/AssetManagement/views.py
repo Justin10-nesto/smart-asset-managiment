@@ -1,8 +1,11 @@
+import pickle
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.db import transaction
-from AssetManagement.models import *
+import pandas as pd
+from  AssetManagement.models import *
 from UAA.permissionChecking import permission_required
+import json
 
 @transaction.atomic()
 @permission_required(['AssetManagement.add_assettype', 'AssetManagement.view_assettype'])
@@ -105,18 +108,16 @@ def assetDelete(request, id):
 
 @transaction.atomic()
 @permission_required(['AssetManagement.add_assetuse', 'AssetManagement.view_assetuse'])
-def assetUseList(request):
+def assetUseList(request, name):
+    asset = Asset.objects.get(name = name)
     if request.method == "POST":
         name = request.POST.get('name')
-        asset_id = request.POST.get('asset')
-        asset = Asset.objects.get(id = asset_id)
         user = UserDetails.objects.get(user = request.user)
         AssetUse.objects.create(name = name, asset= asset, created_by = user, update_by = user)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-    asset_info = AssetUse.objects.all()
-    assets = Asset.objects.all()
-    context = {'asset_info':asset_info, 'assets':assets}
+    asset_info = AssetUse.objects.filter(asset = asset)
+    context = {'asset_info':asset_info, 'asset':asset}
     return render(request, 'AssetManagement/list-assetUse.html', context)
 
 @transaction.atomic()
@@ -124,11 +125,9 @@ def assetUseList(request):
 def assetUseEdit(request, id):
     if request.method == "POST":
         name = request.POST.get('name')
-        asset_id = request.POST.get('asset')
-        asset = Asset.objects.get(id = asset_id)
         user = UserDetails.objects.get(user = request.user)
         content = AssetUse.objects.filter(id = id)
-        content.update(name = name, asset= asset,  update_by = user)
+        content.update(name = name, update_by = user)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -140,18 +139,17 @@ def assetUseDelete(request, id):
 
 @transaction.atomic()
 @permission_required(['AssetManagement.add_assetstatus', 'AssetManagement.view_assetstatus'])
-def assetStatusList(request):
+def assetStatusList(request, name):
+    asset_info = Asset.objects.get(name = name)
     if request.method == "POST":
         name = request.POST.get('name')
-        asset_id = request.POST.get('asset')
-        asset = Asset.objects.get(id = asset_id)
         user = UserDetails.objects.get(user = request.user)
-        AssetStatus.objects.create(name = name, asset= asset, created_by = user, update_by = user)
+        AssetStatus.objects.create(name = name, asset= asset_info, created_by = user, update_by = user)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-    asset_info = AssetStatus.objects.all()
     assets = Asset.objects.all()
-    context = {'asset_info':asset_info, 'assets':assets}
+    asset_status = AssetStatus.objects.filter(asset = asset_info)
+    context = {'asset':asset_info, 'asset_info':asset_status, 'assets':assets}
     return render(request, 'AssetManagement/list-assetStatus.html', context)
 
 @transaction.atomic()
@@ -159,11 +157,9 @@ def assetStatusList(request):
 def assetStatusEdit(request, id):
     if request.method == "POST":
         name = request.POST.get('name')
-        asset_id = request.POST.get('asset')
-        asset = Asset.objects.get(id = asset_id)
         user = UserDetails.objects.get(user = request.user)
         content = AssetStatus.objects.filter(id = id)
-        content.update(name = name, asset= asset,  update_by = user)
+        content.update(name = name, update_by = user)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -175,18 +171,16 @@ def assetStatusDelete(request, id):
 
 @transaction.atomic()
 @permission_required(['AssetManagement.add_assetrole', 'AssetManagement.view_assetrole'])
-def assetRoleList(request):
+def assetRoleList(request, name):
+    asset = Asset.objects.get(name = name)
     if request.method == "POST":
         name = request.POST.get('name')
-        asset_id = request.POST.get('asset')
-        asset = Asset.objects.get(id = asset_id)
         user = UserDetails.objects.get(user = request.user)
         AssetRole.objects.create(name = name, asset= asset, created_by = user, update_by = user)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-    asset_info = AssetRole.objects.all()
-    assets = Asset.objects.all()
-    context = {'asset_info':asset_info, 'assets':assets}
+    asset_info = AssetRole.objects.filter(asset = asset )
+    context = {'asset':asset, 'asset_info':asset_info}
     return render(request, 'AssetManagement/list-assetRole.html', context)
 
 @transaction.atomic()
@@ -194,11 +188,9 @@ def assetRoleList(request):
 def assetRoleEdit(request, id):
     if request.method == "POST":
         name = request.POST.get('name')
-        asset_id = request.POST.get('asset')
-        asset = Asset.objects.get(id = asset_id)
         user = UserDetails.objects.get(user = request.user)
         content = AssetRole.objects.filter(id = id)
-        content.update(name = name, asset= asset,  update_by = user)
+        content.update(name = name, update_by = user)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -208,11 +200,12 @@ def assetRoleDelete(request, id):
     AssetRole.objects.filter(id= id).delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-
 @transaction.atomic()
 @permission_required(['AssetManagement.add_assetdetail', 'AssetManagement.view_assetdetail'])
 def assetDetailList(request, name):
     asset_info = Asset.objects.get(name = name)
+    description_type =  AssetDescriptionType.objects.get_or_create(name = 'User Description')
+    assets_descriptiontypes = AssetUserDescription.objects.filter(description_type = description_type[0], asset = asset_info)
     if request.method == "POST":
         owner = request.POST.get('owner')
         location = request.POST.get('location')
@@ -226,21 +219,34 @@ def assetDetailList(request, name):
         owner = request.POST.get('owner')
         payment_status = request.POST.get('payment_status')
         asset_id = request.POST.get('asset')
-        
+        asset_description = {}
+        if assets_descriptiontypes.exists():
+            for description in assets_descriptiontypes:
+                description_obtained = ''
+                if description.type == 'file':
+                    description_obtained = request.FILES[str(description.id)].name
+                else:
+                    description_obtained = request.POST.get(str(description.id))
+                asset_description[description.name] = description_obtained
+
+
         type = AssetType.objects.get(id = type_id)
         ownership = OwnershipType.objects.get(id = ownership_id)
         asset_status = AssetStatus.objects.get(id = asset_status_id)
         assets_use= AssetUse.objects.get(id = assets_use_id)
         payment= PaymentStatus.objects.get(id = payment_status_id)
         user = UserDetails.objects.get(user = request.user)
-        
-        AssetDetail.objects.create(owner = owner, location= location, asset_description= description, type= type, ownership= ownership, asset= asset_info, asset_status= asset_status, asset_use= assets_use, paynent= payment, created_by = user, update_by = user)
+
+        asset_description = json.dumps(asset_description)
+        asset  = AssetDetail.objects.get_or_create(owner = owner, location= location, type= type, ownership= ownership, asset= asset_info, asset_status= asset_status, asset_use= assets_use, paynent= payment, created_by = user, update_by = user)[0]
+        asset.asset_description= asset_description
+        asset.save()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     
     payment_status_arry = ['Pending', 'Completed', 'Not Paid']
     for payment in payment_status_arry:
         payment_state = PaymentStatus.objects.get_or_create(name = payment, )
-        
+
     ownership_status_arry = ['Private', 'Organization', 'partnership']
     for ownership in ownership_status_arry:
         ownership_state = OwnershipType.objects.get_or_create(name = ownership, )
@@ -250,9 +256,9 @@ def assetDetailList(request, name):
     asset_status= AssetStatus.objects.all()
     payment_status= PaymentStatus.objects.all()
     assets_uses = AssetUse.objects.filter(asset = asset_info)
+    assets_descriptiontypes = AssetUserDescription.objects.filter(description_type = description_type[0], asset = asset_info)
     assets_details = AssetDetail.objects.filter(asset = asset_info)
-
-    context = {'asset':asset_info, 'assets_details':assets_details, 'types':types, 'assets_uses':assets_uses, 'asset_status':asset_status, 'ownerships':ownerships, 'payment_status':payment_status}
+    context = {'asset':asset_info, 'assets_descriptiontypes':assets_descriptiontypes, 'assets_details':assets_details, 'types':types, 'assets_uses':assets_uses, 'asset_status':asset_status, 'ownerships':ownerships, 'payment_status':payment_status}
     return render(request, 'AssetManagement/list-assetDetail.html', context)
 
 @transaction.atomic()
@@ -274,3 +280,98 @@ def assetDetailDelete(request, id):
     AssetDetail.objects.filter(id= id).delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+@transaction.atomic()
+@permission_required(['AssetManagement.add_assetdescriptiontype', 'AssetManagement.view_assetdescriptiontype'])
+def assetUserDescriptionTypeList(request, name):
+    asset_info = Asset.objects.get(name = name)
+    description_type =  AssetDescriptionType.objects.get_or_create(name = 'Owner Details')
+    if request.method == "POST":
+        name = request.POST.get('name')
+        type = request.POST.get('type')
+        is_required = bool(int(request.POST.get('is_required')))
+        user = UserDetails.objects.get(user = request.user)
+        AssetUserDescription.objects.create(name = name, type= type, is_required = is_required, description_type = description_type[0], asset= asset_info, created_by = user, update_by = user)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    assets_descriptiontypes = AssetUserDescription.objects.filter(description_type = description_type[0], asset = asset_info)
+
+    context = {'asset':asset_info, 'assets_descriptiontypes':assets_descriptiontypes}
+    return render(request, 'AssetManagement/list-userdescription.html', context)
+
+@transaction.atomic()
+@permission_required(['AssetManagement.add_assetdescriptiontype', 'AssetManagement.view_assetdescriptiontype'])
+def assetDescriptionTypeList(request, name):
+    asset_info = Asset.objects.get(name = name)
+    description_type =  AssetDescriptionType.objects.get_or_create(name = 'User Description')
+    if request.method == "POST":
+        name = request.POST.get('name')
+        type = request.POST.get('type')
+        is_required = bool(int(request.POST.get('is_required')))
+        user = UserDetails.objects.get(user = request.user)
+        AssetUserDescription.objects.create(name = name, type= type, is_required = is_required, description_type = description_type[0], asset= asset_info, created_by = user, update_by = user)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    assets_descriptiontypes = AssetUserDescription.objects.filter(description_type = description_type[0], asset = asset_info)
+
+    context = {'asset':asset_info, 'assets_descriptiontypes':assets_descriptiontypes}
+    return render(request, 'AssetManagement/list-assetdescriptiontype.html', context)
+
+@transaction.atomic()
+@permission_required(['AssetManagement.change_assetdescriptiontype'])
+def assetDescriptionTypeEdit(request, id):
+    if request.method == "POST":    
+        name = request.POST.get('name')
+        type = request.POST.get('type')
+        user = UserDetails.objects.get(user = request.user)
+        content = AssetUserDescription.objects.filter(id = id)
+        content.update(name = name, type= type, asset= content.first().asset, update_by = user)
+    
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+@transaction.atomic()
+@permission_required(['AssetManagement.delete_assetdescriptiontype'])
+def assetDescriptionTypeDelete(request, id):
+    AssetUserDescription.objects.filter(id= id).delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+def assetFullDetails(request, id):
+    assets_details = AssetDetail.objects.get(id = id)
+    description_type =  AssetDescriptionType.objects.get_or_create(name = 'Owner Details')
+    assets_descriptiontypes = AssetUserDescription.objects.filter(description_type = description_type[0], asset = assets_details.asset)
+    if request.method == "POST":
+        name = request.POST.get('name')
+        role = request.POST.get('role')
+        user_description = {}
+        if assets_descriptiontypes.exists():
+            for description in assets_descriptiontypes:
+                description_obtained = ''
+                if description.type == 'file':
+                    description_obtained = request.FILES[str(description.id)].name
+                else:
+                    description_obtained = request.POST.get(str(description.id))
+                user_description[description.name] = description_obtained
+        asset_role = AssetRole.objects.get(id = role)
+        user_description_json = json.dumps(user_description)
+        user = UserDetails.objects.get(user = request.user)
+        AssetUser.objects.get_or_create(full_name = name, description = user_description_json, role = asset_role, asset = assets_details, created_by = user, update_by = user)
+    
+    roles = AssetRole.objects.filter(asset = assets_details.asset)
+    asset_user = AssetUser.objects.filter(asset = assets_details)
+
+    html_table = ''
+    asset_user_arr = []
+    if asset_user.exists():
+        for user in asset_user:
+            user_dict = {}
+            user_dict['Full name'] = user.full_name
+            user_dict['role'] = user.role
+            for key, values in user.loaded_description().items():
+                user_dict[key] = values
+            asset_user_arr.append(user_dict)
+        df = pd.DataFrame(asset_user_arr)
+        print(df)
+        # Generate HTML from DataFrame with Bootstrap classes and ID
+        html_table = df.to_html(classes='table table-striped table-bordered', index=False, table_id='example1')
+
+    # Pass the HTML to the context
+    context = {'html_table': html_table,  'assets_details':assets_details, 'roles':roles, 'assets_descriptiontypes':assets_descriptiontypes}
+    return render(request, 'AssetManagement/full-assetDetail.html', context)

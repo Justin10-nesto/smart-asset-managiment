@@ -1,3 +1,14 @@
 from django.contrib import admin
+from AssetManagement.models import *
 
-# Register your models here.
+admin.site.register(AssetDetail)
+admin.site.register(AssetUser)
+admin.site.register(Asset)
+admin.site.register(AssetDescriptionType)
+admin.site.register(AssetCategory)
+admin.site.register(AssetType)
+admin.site.register(AssetStatus)
+admin.site.register(Country)
+admin.site.register(Region)
+admin.site.register(District)
+admin.site.register(Ward)

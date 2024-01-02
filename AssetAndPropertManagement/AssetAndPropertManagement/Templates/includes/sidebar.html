@@ -112,38 +112,6 @@
                     </li>
                     {% endif %}
     
-                    {% if perms.AssetManagement.view_assetuse or perms.AssetManagement.change_assetuse or perms.AssetManagement.add_assetuse or perms.AssetManagement.delete_assetuse %} <li class="nav-item">
-                      <li class="nav-item">
-                      <a href="{% url 'assetUseList' %}" class="nav-link">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>
-                          Asset Uses
-                        </p>
-                      </a>
-                    </li>
-                    {% endif %}
-    
-                    {% if perms.AssetManagement.view_assetstatus or perms.AssetManagement.change_assetstatus or perms.AssetManagement.add_assetstatus or perms.AssetManagement.delete_assetstatus %} <li class="nav-item">
-                      <li class="nav-item">
-                        <a href="{% url 'assetStatusList' %}" class="nav-link">
-                          <i class="far fa-circle nav-icon"></i>
-                          <p>
-                            Asset Status
-                          </p>
-                        </a>
-                      </li>
-                      {% endif %}
-                      {% if perms.AssetManagement.view_assetrole or perms.AssetManagement.change_assetrole or perms.AssetManagement.add_assetrole or perms.AssetManagement.delete_assetrole %} <li class="nav-item">
-                        <li class="nav-item">
-                          <a href="{% url 'assetRoleList' %}" class="nav-link">
-                            <i class="far fa-circle nav-icon"></i>
-                          <p>
-                            Asset Roles
-                          </p>
-                        </a>
-                      </li>
-                      {% endif %}
-    
                   </ul>
                 </li>
                 {% if asset_data %}
@@ -171,60 +139,113 @@
                   </ul>
                 </li>
                 {% endif %}
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-tachometer-alt"></i>
-                <p>
-                  User Management
-                  <i class="right fas fa-angle-left"></i>
-                </p>
-              </a>
-              <ul class="nav nav-treeview">
-                {% if perms.auth.view_user or perms.auth.change_user or perms.auth.add_user or perms.AssetManagement.delete_user %}
                 <li class="nav-item">
-                  <a href="{% url 'userList' %}" class="nav-link">
-                    <i class="fas fa-user-circle nav-icon"></i>
+                  <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-tachometer-alt"></i>
                     <p>
-                      Users List
+                      User Management
+                      <i class="right fas fa-angle-left"></i>
                     </p>
                   </a>
+                  <ul class="nav nav-treeview">
+                    {% if perms.auth.view_user or perms.auth.change_user or perms.auth.add_user or perms.AssetManagement.delete_user %}
+                    <li class="nav-item">
+                      <a href="{% url 'userList' %}" class="nav-link">
+                        <i class="fas fa-user-circle nav-icon"></i>
+                        <p>
+                          Users List
+                        </p>
+                      </a>
+                    </li>
+                    {% endif %}
+    
+                    {% if perms.auth.view_group or perms.auth.change_group or perms.auth.add_group or perms.auth.delete_group %}
+                    <li class="nav-item">
+                      <a href="{% url 'manageroles' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                          Role List
+                        </p>
+                      </a>
+                    </li>
+                    {% endif %}
+                  </ul>
                 </li>
-                {% endif %}
-
-                {% if perms.auth.view_group or perms.auth.change_group or perms.auth.add_group or perms.auth.delete_group %}
                 <li class="nav-item">
-                  <a href="{% url 'manageroles' %}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
+                  <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-tachometer-alt"></i>
                     <p>
-                      Role List
+                      Aplication Management
+                      <i class="right fas fa-angle-left"></i>
                     </p>
                   </a>
+                  <ul class="nav nav-treeview">
+                    {% if perms.auth.view_user or perms.auth.change_user or perms.auth.add_user or perms.AssetManagement.delete_user %}
+                    <li class="nav-item">
+                      <a href="#" class="nav-link">
+                        <i class="fas fa-user-circle nav-icon"></i>
+                        <p>
+                          Asset Aplication
+                        </p>
+                      </a>
+                    </li>
+                    {% endif %}
+    
+                    {% if perms.auth.view_group or perms.auth.change_group or perms.auth.add_group or perms.auth.delete_group %}
+                    <li class="nav-item">
+                      <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                          Certicificate Aplication
+                        </p>
+                      </a>
+                    </li>
+                    {% endif %}
+                  </ul>
                 </li>
-                {% endif %}
-              </ul>
-            </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                    <p>
+                      Project Management
+                      <i class="right fas fa-angle-left"></i>
+                    </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    {% if perms.auth.view_user or perms.auth.change_user or perms.auth.add_user or perms.AssetManagement.delete_user %}
+                    <li class="nav-item">
+                      <a href="#" class="nav-link">
+                        <i class="fas fa-user-circle nav-icon"></i>
+                        <p>
+                        Completed Projects
+                        </p>
+                      </a>
+                    </li>
+                    {% endif %}
+    
+                    {% if perms.auth.view_group or perms.auth.change_group or perms.auth.add_group or perms.auth.delete_group %}
+                    <li class="nav-item">
+                      <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                          Ongoing Projects
+                        </p>
+                      </a>
+                    </li>
+                    {% endif %}
+                    {% if perms.auth.view_group or perms.auth.change_group or perms.auth.add_group or perms.auth.delete_group %}
+                    <li class="nav-item">
+                      <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>
+                          Todo Projects
+                        </p>
+                      </a>
+                    </li>
+                    {% endif %}
+                  </ul>
+                </li>
 
-            {% if perms.AssetManagement.view_team or perms.AssetManagement.change_team or perms.AssetManagement.add_team or perms.AssetManagement.delete_team %}
-            <li class="nav-item">
-              <a href="" class="nav-link">
-                <i class="nav-icon bi bi-people-fill"></i>
-                <p>
-                  Teams
-                </p>
-              </a>
-            </li>
-            {% endif %}
-
-            {% if perms.TaskManagement.view_assetbudget %} 
-            <li class="nav-item">
-              <a href="" class="nav-link">
-                <i class="nav-icon fas fa-columns"></i>
-                <p>
-                  Summary asset Budget
-                </p>
-              </a>
-            </li>
-            {% endif %}
             {% if perms.TaskManagement.can_view_report %} 
             <li class="nav-item">
               <a href="" class="nav-link">

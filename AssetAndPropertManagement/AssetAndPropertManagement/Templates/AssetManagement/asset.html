@@ -1,0 +1,51 @@
+{% load static %} {% include "includes/header.html" %} {% include "includes/sidebar.html" %}
+
+<div class="content-wrapper bg-white">
+    <div class="row">
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-2">
+
+                        <!-- Profile Image -->
+                        <div class="card card-primary card-outline">
+                            <div class="card-body box-profile">
+                                <div class="text-center">
+                                    <img class="profile-user-img img-fluid img-circle" src="{% static group.file.url %}"
+                                        alt="{{teams.name}}">
+                                </div>
+
+                                <ul class="list-group list-group-unbordered mb-3">
+                                    <li class="list-group-item">
+                                        <a href="{% url 'assetRoleList' asset.name %}"
+                                         class="float-lg-start">Asset Roles</a>
+                                    </li>
+                                    <ul class="list-group list-group-unbordered mb-3">
+                                        <li class="list-group-item">
+                                            <a href="{% url 'assetUseList' asset.name %}"
+                                             class="float-lg-start">Asset Usses</a>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="{% url 'assetDescriptionTypeList' asset.name %}"
+                                                class="float-lg-start">Asset description Type</a>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <a href="{% url 'assetUserDescriptionTypeList' asset.name %}"
+                                                class="float-lg-start">Asset owner description</a>
+                                        </li>
+                                    <li class="list-group-item">
+                                        <a href="{% url 'assetStatusList' asset.name %}"
+                                            class="float-lg-start">Asset status</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="{% url 'assetDetailList' asset.name %}"
+                                            class="float-lg-start">Asset List</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+
+                    </div>
