@@ -23,4 +23,6 @@ urlpatterns = [
     path('', include('ProjectManagement.urls')),
     path('', include('PropertyManagement.urls')),
     path('', include('UAA.urls')),
+    path('', include('ApiDev.urls')),
+    
 ]
