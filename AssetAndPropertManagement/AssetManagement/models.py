@@ -91,6 +91,8 @@ class AssetType(models.Model):
     class Meta:
         verbose_name = "Asset Type"
         db_table = "Asset Type"
+
+
     
 class AssetCategory(models.Model):
     name = models.CharField(max_length=100)
@@ -202,15 +204,21 @@ class AssetRole(models.Model):
 class AssetDetail(models.Model):
     owner = models.CharField(max_length=100)
     location = models.TextField()
-    asset_description = models.JSONField(default = dict())
+    on_sales = models.BooleanField(default = False)
+    needs_tenants = models.BooleanField(default = True)
+    amount_per_type = models.BigIntegerField(default= 50000)
+    time_duration = models.BigIntegerField(default= 3) #in months
+    asset_description = models.JSONField(default = [])
     number_asset_present = models.BigIntegerField(default=1)
+    is_house = models.BooleanField(default = False)
+    is_tower = models.BooleanField(default = False)
     ward = models.ForeignKey(Ward, on_delete= models.CASCADE, null= True)
-    type = models.ForeignKey(AssetType, on_delete= models.CASCADE)
-    ownership = models.ForeignKey(OwnershipType, on_delete= models.CASCADE)
-    asset = models.ForeignKey(Asset, on_delete= models.CASCADE)
-    asset_status = models.ForeignKey(AssetStatus, on_delete= models.CASCADE)
-    asset_use = models.ForeignKey(AssetUse, on_delete= models.CASCADE)
-    paynent = models.ForeignKey(PaymentStatus, on_delete= models.CASCADE)
+    type = models.ForeignKey(AssetType, on_delete= models.CASCADE) # normal, master, rooms only, rooms with sebule
+    ownership = models.ForeignKey(OwnershipType, on_delete= models.CASCADE)  # company or indvidual
+    asset = models.ForeignKey(Asset, on_delete= models.CASCADE) # house, land, cars etc
+    asset_status = models.ForeignKey(AssetStatus, on_delete= models.CASCADE) # DEVELOPMENT, FNISHING, OLD ETC
+    asset_use = models.ForeignKey(AssetUse, on_delete= models.CASCADE) # settlemt, farming, bussiness
+    paynent = models.ForeignKey(PaymentStatus, on_delete= models.CASCADE) # full payed or not for goverment taxes
     created_by = models.ForeignKey(UserDetails, related_name='created_detail', on_delete=models.CASCADE)
     update_by = models.ForeignKey(UserDetails, related_name='updated_detail', on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -226,11 +234,61 @@ class AssetDetail(models.Model):
         return users
     
     def loaded_discription(self):
+        house_asset = Asset.objects.get_or_create(name = 'houses')
+        asset_detail = AssetDetail.objects.filter(id = self.id)
+        house_details = HouseDetail.objects.filter(asset = asset_detail.first())
+        if house_details.exists():
+            neede_tenant = False
+            for house_detail in house_details:
+                if not house_detail.have_tenant:
+                    neede_tenant = True
+            house_details.update(needs_tenants = neede_tenant)
+                
+        if asset_detail.first().asset.id == house_asset[0].id:
+            asset_detail.update(is_house = True)
         return json.loads(self.asset_description)
     
     class Meta:
         verbose_name = "Asset Detail"
         db_table = "Asset Detail"
+    
+class AssetMaintance(models.Model):
+    name = models.CharField(max_length=100)
+    mainannce_date = models.DateField()
+    is_maintained = models.BooleanField(default = False)
+    reason = models.TextField(null = True, blank = True)
+    maintained_by = models.JSONField(null = True, blank = True)
+    asset = models.ForeignKey(AssetDetail, on_delete= models.CASCADE)
+    created_by = models.ForeignKey(UserDetails, related_name='created_type_maintanance', on_delete=models.CASCADE)
+    update_by = models.ForeignKey(UserDetails, related_name='updated_type_maintanance', on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Asset maintinance"
+        db_table = "Asset maintinance"
+
+
+class HouseDetail(models.Model):
+    house_number = models.CharField(max_length=100)
+    have_tenant = models.BooleanField(default = False)
+    payment_status = models.BooleanField(default = True)
+    tenant = models.JSONField(null =True, blank=True)
+    owner = models.JSONField(null =True, blank=True)
+    asset = models.ForeignKey(AssetDetail, on_delete= models.CASCADE)
+    name = models.CharField(max_length=100)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "House Detail"
+        db_table = "House Detail"
 
 class AssetDescriptionType(models.Model):
     name = models.CharField(max_length=100)
@@ -242,7 +300,7 @@ class AssetDescriptionType(models.Model):
     
     class Meta:
         verbose_name = "Asset Description Type"
-        db_table = "Asset User Description Type"
+        db_table = "Asset Description Type"
 
 class AssetUserDescription(models.Model):
     name = models.CharField(max_length=100)

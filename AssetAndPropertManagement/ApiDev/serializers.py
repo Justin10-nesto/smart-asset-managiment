@@ -57,3 +57,13 @@ class AssetUserSerializer(ModelSerializer):
     class Meta:
         model = AssetUser
         fields = '__all__'
+
+class AssetMaintanceSerializer(ModelSerializer):
+    class Mete:
+        model = AssetMaintance
+        fields = '__all__'
+
+class HouseDetailSerializer(ModelSerializer):
+    class Mete:
+        model = HouseDetail
+        fields = '__all__'

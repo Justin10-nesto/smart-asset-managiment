@@ -4,7 +4,7 @@ from .views import *
 
 urlpatterns = [
   path('UserDetails',   UserDetailsView.as_view({
-        'post':'create_in_builk_or_single',
+        'post':'create',
         'get':'list'
         })),
   path('UserDetails/name/<str:pk>',   UserDetailsView.as_view({
@@ -27,7 +27,7 @@ urlpatterns = [
         })), 
   path('AssetUserDescription',   AssetUserDescriptionView.as_view({
         'get':'list',
-        'post':'create_in_builk_or_single'
+        'post':'create'
         })), 
   path('AssetUserDescription/<str:pk>',   AssetUserDescriptionView.as_view({
         'delete':'destroy',
@@ -35,7 +35,7 @@ urlpatterns = [
         })), 
   path('AssetUser',   AssetUserView.as_view({
         'get':'list',
-        'post':'create_in_builk_or_single'
+        'post':'create'
         })), 
   path('AssetUser/<str:pk>',   AssetUserView.as_view({
         'delete':'destroy',
@@ -43,7 +43,7 @@ urlpatterns = [
         'get':'retrieve'
         })), 
   path('AssetRole', AssetRoleView.as_view({
-        'post':'create_in_builk_or_single',
+        'post':'create',
         'get':'list'
     })),
   path('AssetRole/<str:pk>', AssetRoleView.as_view({
@@ -56,7 +56,7 @@ urlpatterns = [
     })),
 
     path('AssetDetail',   AssetDetailView.as_view({
-        'post':'create_in_builk_or_single',
+        'post':'create',
         'get':'list'
         })),
   path('AssetDetail/name/<str:pk>',   AssetDetailView.as_view({
@@ -79,7 +79,7 @@ urlpatterns = [
         })), 
   path('AssetUserDescription',   AssetUserDescriptionView.as_view({
         'get':'list',
-        'post':'create_in_builk_or_single'
+        'post':'create'
         })), 
   path('AssetUserDescription/<str:pk>',   AssetUserDescriptionView.as_view({
         'delete':'destroy',
@@ -87,7 +87,7 @@ urlpatterns = [
         })), 
   path('AssetUser',   AssetUserView.as_view({
         'get':'list',
-        'post':'create_in_builk_or_single'
+        'post':'create'
         })), 
   path('AssetUser/<str:pk>',   AssetUserView.as_view({
         'delete':'destroy',
@@ -97,11 +97,54 @@ urlpatterns = [
 
   path('Asset',   AssetView.as_view({
         'get':'list',
-        'post':'create_in_builk_or_single'
+        'post':'create'
         })), 
   path('Asset/<str:pk>',   AssetView.as_view({
         'delete':'destroy',
         'patch':'partial_update',
         'get':'retrieve'
+        })), 
+  path('AssetType',   AssetTypeView.as_view({
+        'get':'list',
+        'post':'create'
+        })), 
+  path('AssetType/<str:pk>',   AssetTypeView.as_view({
+        'delete':'destroy',
+        'patch':'partial_update',
+        'get':'retrieve'
+        })), 
+  path('HouseDetail',   HouseDetailView.as_view({
+        'get':'list',
+        'post':'create'
+        })), 
+  path('HouseDetail/<str:pk>',   HouseDetailView.as_view({
+        'delete':'destroy',
+        'patch':'partial_update',
+        'get':'retrieve'
+        })), 
+  path('AssetMaintance',   AssetMaintanceView.as_view({
+        'get':'list',
+        'post':'create'
+        })), 
+  path('AssetMaintance/<str:pk>',   AssetMaintanceView.as_view({
+        'delete':'destroy',
+        'patch':'partial_update',
+        'get':'retrieve'
+        })), 
+  path('AssetCategory',   AssetCategoryView.as_view({
+        'get':'list',
+        'post':'create'
+        })), 
+  path('AssetCategory/<str:pk>',  AssetCategoryView.as_view({
+        'delete':'destroy',
+        'patch':'partial_update',
+        'get':'retrieve'
+        })), 
+
+  path('AssetSummary/<str:name>',   AssetSummary.as_view({
+        'get':'retrieve_id'
+        })), 
+  path('AssetSummary/category/<str:name>',   AssetSummary.as_view({
+        'get':'retrieve_by_category'
         })),   
 ]

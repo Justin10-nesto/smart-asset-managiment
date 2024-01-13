@@ -368,8 +368,6 @@ class AssetTypeView(ViewSet):
             AssetType_serializer = AssetTypeSerializer(ss, many=True)
             return Response(AssetType_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
 class AssetCategoryView(ViewSet):
     def retrieve(self,request, pk=None):
         qrset = AssetCategory.objects.filter(pk=pk) 
@@ -578,3 +576,102 @@ class AssetRoleView(ViewSet):
             lab_serializer = AssetRoleSerializer(lab, many=True)
             return Response(lab_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AssetMaintanceView(ViewSet):
+    def retrieve(self,request, pk=None):
+        qrset = AssetMaintance.objects.filter(pk=pk) 
+        serializer = AssetMaintanceSerializer(qrset)
+        return Response(serializer.data, status=status.HTTP_200_OK)  
+    
+    def destroy(self,request, pk=None):
+        qrset = AssetMaintance.objects.filter(pk=pk)
+        qrset.delete()
+        return Response("deleted", status=status.HTTP_200_OK)
+    
+    def list(self,request):
+        qrset = AssetMaintance.objects.all()
+        serializer = AssetMaintanceSerializer(qrset, many=True, )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self,request):
+        serializer = AssetMaintanceSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)  
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def partial_update(self, request, pk=None):
+        qrset = AssetMaintance.objects.filter(pk=pk).first()
+        serializer = AssetMaintanceSerializer(instance=qrset, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def create_in_builk_or_single(self,request):
+        check_data = request.data[0]
+        serializer = AssetMaintanceSerializer(data=check_data)
+        if serializer.is_valid():
+            bulk_data = [AssetMaintance(**item) for item in request.data]
+            lab = AssetMaintance.objects.bulk_create(bulk_data)
+            lab_serializer = AssetMaintanceSerializer(lab, many=True)
+            return Response(lab_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class HouseDetailView(ViewSet):
+    def retrieve(self,request, pk=None):
+        qrset = HouseDetail.objects.filter(pk=pk) 
+        serializer = HouseDetailSerializer(qrset)
+        return Response(serializer.data, status=status.HTTP_200_OK)  
+    
+    def destroy(self,request, pk=None):
+        qrset = HouseDetail.objects.filter(pk=pk)
+        qrset.delete()
+        return Response("deleted", status=status.HTTP_200_OK)
+    
+    def list(self,request):
+        qrset = HouseDetail.objects.all()
+        serializer = HouseDetailSerializer(qrset, many=True, )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def create(self,request):
+        serializer = HouseDetailSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)  
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def partial_update(self, request, pk=None):
+        qrset = HouseDetail.objects.filter(pk=pk).first()
+        serializer = HouseDetailSerializer(instance=qrset, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def create_in_builk_or_single(self,request):
+        check_data = request.data[0]
+        serializer = HouseDetailSerializer(data=check_data)
+        if serializer.is_valid():
+            bulk_data = [HouseDetail(**item) for item in request.data]
+            lab = HouseDetail.objects.bulk_create(bulk_data)
+            lab_serializer = HouseDetailSerializer(lab, many=True)
+            return Response(lab_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AssetSummary(ViewSet):
+    def retrieve_id(self,request, name='House'):
+        asset = Asset.objects.filter(name = name).first()
+        userDetail = AssetDetail.objects.filter(asset=asset)
+        maintanace = AssetMaintance.objects.filter(asset = asset)
+        number_assets = userDetail.count()
+
+        return Response({'number_asset':number_assets}, status=status.HTTP_200_OK) 
+    
+    def retrieve_by_category(self,request, name):
+        category = AssetCategory.objects.filter(name = name).first()
+        asset = Asset.objects.filter(name = 'houses', category=category).first()
+        userDetail = AssetDetail.objects.filter(asset=asset)
+        serialiizer = AssetDetailSerializer(userDetail, many=True)
+        return Response(serialiizer.data, status=status.HTTP_200_OK) 
+    
